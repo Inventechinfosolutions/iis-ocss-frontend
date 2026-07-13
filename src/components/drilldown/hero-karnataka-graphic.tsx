@@ -1,6 +1,6 @@
 import { geoMercator, geoPath, type GeoPermissibleObjects } from "d3-geo"
-import { useEffect, useId, useMemo, useState, type LucideIcon } from "react"
-import { Building2, Search } from "lucide-react"
+import { useEffect, useId, useMemo, useState } from "react"
+import { Building2, Search, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type GeoFeature = {
