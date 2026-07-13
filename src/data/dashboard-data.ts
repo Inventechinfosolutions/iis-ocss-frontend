@@ -1,5 +1,7 @@
 export type TrendDirection = "up" | "down" | "flat"
 
+import { feCompanies } from "@/data/kpi-drilldown-data"
+
 export type KpiItem = {
   id: string
   label: string
@@ -46,6 +48,14 @@ export type ReportItem = {
   title: string
   description: string
   href: string
+  /** TanStack route when the report has a live page */
+  to?:
+    | "/reports/scam-companies"
+    | "/reports/victims"
+    | "/reports/eligibility"
+    | "/reports/settlement"
+    | "/reports/payments"
+    | "/reports/audit"
   icon: "building" | "user" | "clipboard" | "wallet" | "bank" | "scale"
 }
 
@@ -61,12 +71,12 @@ export const kpiData: KpiItem[] = [
   {
     id: "fes",
     label: "Scam companies handled",
-    value: 12,
+    value: feCompanies.length,
     format: "number",
     trend: 2,
     trendDirection: "up",
     hint: "Companies under this case",
-    spark: [8, 9, 9, 10, 11, 11, 12],
+    spark: [8, 9, 9, 10, 11, 11, feCompanies.length],
     accent: "cyan",
   },
   {
@@ -298,7 +308,8 @@ export const fundComparison = [
   { entity: "IMA Jewels", recovered: 682, liability: 2140, paid: 498 },
   { entity: "Lancer Finance", recovered: 312, liability: 980, paid: 265 },
   { entity: "Innovative BC", recovered: 148, liability: 420, paid: 126 },
-  { entity: "Others", recovered: 106, liability: 372, paid: 97 },
+  { entity: "Surya Chits", recovered: 65, liability: 149, paid: 48 },
+  { entity: "Other entities", recovered: 106, liability: 245, paid: 97 },
 ]
 
 export const claimsByEntity = [
@@ -306,7 +317,8 @@ export const claimsByEntity = [
   { name: "Lancer Finance", claims: 34_860, color: "#3b82f6", icon: "landmark" as const },
   { name: "Innovative Business Centre", claims: 14_210, color: "#60a5fa", icon: "building" as const },
   { name: "Surya Chits", claims: 5_842, color: "#f97316", icon: "sun" as const },
-  { name: "Others (8 companies)", claims: 3_510, color: "#38bdf8", icon: "users" as const },
+  { name: "Riddhi Finance", claims: 1_100, color: "#0ea5e9", icon: "users" as const },
+  { name: "Other entities", claims: 4_410, color: "#38bdf8", icon: "users" as const },
 ]
 
 export const assetRecovery = [
@@ -364,42 +376,48 @@ export const reports: ReportItem[] = [
     id: "fe",
     title: "Report by scam company",
     description: "Claims, recovered money, and payouts for each company",
-    href: "#report-fe",
+    href: "/reports/scam-companies",
+    to: "/reports/scam-companies",
     icon: "building",
   },
   {
     id: "investor",
     title: "Report by victim",
     description: "One person’s claim and payment details",
-    href: "#report-investor",
+    href: "/reports/victims",
+    to: "/reports/victims",
     icon: "user",
   },
   {
     id: "assessment",
     title: "Eligibility report",
     description: "Who is eligible, who is not, and what is still pending",
-    href: "#report-assessment",
+    href: "/reports/eligibility",
+    to: "/reports/eligibility",
     icon: "clipboard",
   },
   {
     id: "settlement",
     title: "Settlement money report",
     description: "How funds are shared and what is still left to pay",
-    href: "#report-settlement",
+    href: "/reports/settlement",
+    to: "/reports/settlement",
     icon: "wallet",
   },
   {
     id: "payment",
     title: "Bank payment report",
     description: "Money sent to victims with bank / UTR references",
-    href: "#report-payment",
+    href: "/reports/payments",
+    to: "/reports/payments",
     icon: "bank",
   },
   {
     id: "audit",
     title: "Court & audit report",
     description: "Case references and full activity history",
-    href: "#report-audit",
+    href: "/reports/audit",
+    to: "/reports/audit",
     icon: "scale",
   },
 ]
@@ -482,7 +500,7 @@ export const navGroups: NavGroup[] = [
   {
     heading: "Claim settlement",
     items: [
-      { id: "entities", label: "Scam companies", icon: "entities", badge: "12" },
+      { id: "entities", label: "Scam companies", icon: "entities", badge: String(feCompanies.length) },
       { id: "depositors", label: "Victims", icon: "depositors" },
       { id: "claims", label: "Claims", icon: "claims" },
       { id: "verification", label: "Document check", icon: "verification", badge: "42K" },
@@ -583,6 +601,7 @@ export const processingSpeed = [
 export type ClaimWindow = {
   id: string
   company: string
+  companyId: string
   from: string
   to: string
   status: "open" | "closing-soon" | "closed"
@@ -593,6 +612,7 @@ export const claimWindows: ClaimWindow[] = [
   {
     id: "cw1",
     company: "IMA Jewels",
+    companyId: "fe-ima",
     from: "01 Jan 2025",
     to: "31 Dec 2026",
     status: "open",
@@ -601,6 +621,7 @@ export const claimWindows: ClaimWindow[] = [
   {
     id: "cw2",
     company: "Lancer Finance",
+    companyId: "fe-lancer",
     from: "15 Mar 2025",
     to: "30 Sep 2026",
     status: "open",
@@ -609,6 +630,7 @@ export const claimWindows: ClaimWindow[] = [
   {
     id: "cw3",
     company: "Innovative Business Centre",
+    companyId: "fe-ibc",
     from: "01 Apr 2025",
     to: "20 Jul 2026",
     status: "closing-soon",

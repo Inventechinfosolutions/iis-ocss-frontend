@@ -8,6 +8,7 @@ import {
   UserRound,
   Wallet,
 } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 import { reports } from "@/data/dashboard-data"
 import { cn } from "@/lib/utils"
 
@@ -211,17 +212,8 @@ export function ReportsList() {
           const Icon = theme.Icon
           const Art = theme.Art
 
-          return (
-            <a
-              key={report.id}
-              href={report.href}
-              className={cn(
-                "group relative flex min-h-[150px] flex-col overflow-hidden rounded-2xl bg-card p-4",
-                "shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_12px_32px_rgba(12,25,41,0.06)] border border-border/70",
-                "transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(12,25,41,0.1)] hover:border-primary/25",
-              )}
-              style={{ animationDelay: `${240 + index * 40}ms` }}
-            >
+          const body = (
+            <>
               <Art className="pointer-events-none absolute -right-1 top-2 h-[96px] w-[120px] transition-transform duration-500 group-hover:scale-105" />
 
               <div className="relative flex items-start gap-3 pr-16">
@@ -257,6 +249,36 @@ export function ReportsList() {
                   <ChevronRight className="size-4" />
                 </span>
               </div>
+            </>
+          )
+
+          const className = cn(
+            "group relative flex min-h-[150px] flex-col overflow-hidden rounded-2xl bg-card p-4",
+            "shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_12px_32px_rgba(12,25,41,0.06)] border border-border/70",
+            "transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(12,25,41,0.1)] hover:border-primary/25",
+          )
+
+          if (report.to) {
+            return (
+              <Link
+                key={report.id}
+                to={report.to}
+                className={className}
+                style={{ animationDelay: `${240 + index * 40}ms` }}
+              >
+                {body}
+              </Link>
+            )
+          }
+
+          return (
+            <a
+              key={report.id}
+              href={report.href}
+              className={className}
+              style={{ animationDelay: `${240 + index * 40}ms` }}
+            >
+              {body}
             </a>
           )
         })}

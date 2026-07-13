@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router"
 import {
   ArrowDownRight,
   ArrowRight,
@@ -28,6 +29,19 @@ const icons = {
   settled: HandCoins,
   "recovery-rate": Percent,
 } as const
+
+const kpiRoutes = {
+  fes: "/companies",
+  depositors: "/victims",
+  claims: "/claims",
+  recovered: "/assets",
+} as const
+
+type DrillableKpiId = keyof typeof kpiRoutes
+
+function isDrillableKpi(id: string): id is DrillableKpiId {
+  return id in kpiRoutes
+}
 
 /** Soft pastel card surfaces — easy to scan, friendly UX */
 const accentTheme: Record<
@@ -99,6 +113,7 @@ function KpiCard({ item, index }: { item: KpiItem; index: number }) {
     item.format === "percent"
       ? formatKpiValue(Number(animated.toFixed(1)), item.format)
       : formatKpiValue(Math.round(animated), item.format)
+  const href = isDrillableKpi(item.id) ? kpiRoutes[item.id] : undefined
 
   const TrendIcon =
     item.trendDirection === "up"
@@ -114,8 +129,8 @@ function KpiCard({ item, index }: { item: KpiItem; index: number }) {
         ? "bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400"
         : "bg-slate-100 text-slate-500 dark:bg-slate-500/15 dark:text-slate-400"
 
-  return (
-    <article className="group relative overflow-hidden rounded-2xl border border-black/[0.04] bg-white p-4 shadow-[0_4px_20px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(15,23,42,0.1)] dark:border-white/[0.06] dark:bg-[#141c2c] dark:shadow-[0_8px_28px_rgba(0,0,0,0.35)]">
+  const content = (
+    <>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 dark:hidden"
@@ -156,14 +171,34 @@ function KpiCard({ item, index }: { item: KpiItem; index: number }) {
 
       <div className="relative mt-3 flex items-end justify-between gap-2">
         <p className="max-w-[9.5rem] text-[11px] leading-snug text-slate-500 dark:text-slate-400">
-          {item.hint}
+          {href ? `${item.hint} · Open page` : item.hint}
         </p>
         <div className="h-9 w-20 shrink-0 opacity-90">
           <Sparkline data={item.spark} color={theme.color} id={item.id} />
         </div>
       </div>
-    </article>
+    </>
   )
+
+  const shellClass =
+    "group relative block overflow-hidden rounded-2xl border border-black/[0.04] bg-white p-4 text-left shadow-[0_4px_20px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(15,23,42,0.1)] dark:border-white/[0.06] dark:bg-[#141c2c] dark:shadow-[0_8px_28px_rgba(0,0,0,0.35)]"
+
+  if (href) {
+    return (
+      <Link
+        to={href}
+        className={cn(
+          shellClass,
+          "w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+        )}
+        aria-label={`Open ${item.label} page`}
+      >
+        {content}
+      </Link>
+    )
+  }
+
+  return <article className={shellClass}>{content}</article>
 }
 
 export function KpiStrip() {
@@ -177,7 +212,8 @@ export function KpiStrip() {
           At a glance
         </h2>
         <p className="mt-0.5 text-sm text-muted-foreground">
-          Main numbers for the whole claim settlement programme
+          Main numbers for the whole claim settlement programme — open companies,
+          victims, claims, or recovered assets for full pages
         </p>
       </div>
       <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">

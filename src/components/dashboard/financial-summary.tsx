@@ -10,6 +10,7 @@ import {
   Users,
   Wallet,
 } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 import { financialFooterStats, financialMetrics } from "@/data/dashboard-data"
 import { formatINR, formatPercent } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -99,8 +100,9 @@ export function FinancialSummary({ className }: { className?: string }) {
 
           return (
             <li key={metric.id}>
-              <button
-                type="button"
+              <Link
+                to="/finance/$metricId"
+                params={{ metricId: metric.id }}
                 className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-muted/60"
                 style={{ animationDelay: `${140 + index * 40}ms` }}
               >
@@ -131,7 +133,7 @@ export function FinancialSummary({ className }: { className?: string }) {
                   {display}
                 </p>
                 <ChevronRight className="hidden size-4 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 sm:block" />
-              </button>
+              </Link>
             </li>
           )
         })}

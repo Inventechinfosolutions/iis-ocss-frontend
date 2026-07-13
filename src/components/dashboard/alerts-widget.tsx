@@ -8,6 +8,7 @@ import {
   List,
   MessageSquareWarning,
 } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 import { alerts } from "@/data/dashboard-data"
 import { cn } from "@/lib/utils"
 
@@ -69,8 +70,9 @@ export function AlertsWidget({ className }: { className?: string }) {
 
           return (
             <li key={alert.id}>
-              <button
-                type="button"
+              <Link
+                to="/alerts/$alertId"
+                params={{ alertId: alert.id }}
                 className={cn(
                   "group relative flex w-full gap-3 overflow-hidden rounded-2xl p-3 text-left ring-1 transition-all",
                   "hover:-translate-y-0.5 hover:shadow-md",
@@ -114,20 +116,21 @@ export function AlertsWidget({ className }: { className?: string }) {
                     </span>
                   </div>
                 </div>
-              </button>
+              </Link>
             </li>
           )
         })}
       </ul>
 
-      <button
-        type="button"
+      <Link
+        to="/alerts/$alertId"
+        params={{ alertId: alerts[0]?.id ?? "a1" }}
         className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-50 px-3 py-2.5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100 dark:bg-primary/10 dark:text-primary dark:hover:bg-primary/15"
       >
         <List className="size-4" />
         View all alerts
         <ChevronRight className="size-4 opacity-60" />
-      </button>
+      </Link>
     </section>
   )
 }

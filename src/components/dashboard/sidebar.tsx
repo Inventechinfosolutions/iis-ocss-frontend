@@ -16,7 +16,7 @@ import {
   Wallet,
   X,
 } from "lucide-react"
-import { useState } from "react"
+import { Link, useRouterState } from "@tanstack/react-router"
 import type { NavIcon } from "@/data/dashboard-data"
 import { dashboardMeta, navGroups, userMeta } from "@/data/dashboard-data"
 import { cn } from "@/lib/utils"
@@ -38,6 +38,21 @@ const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
   master: Database,
 }
 
+const navRoutes: Partial<
+  Record<string, "/" | "/companies" | "/victims" | "/claims" | "/assets">
+> = {
+  overview: "/",
+  entities: "/companies",
+  depositors: "/victims",
+  claims: "/claims",
+  recovery: "/assets",
+}
+
+function pathMatches(pathname: string, to: string) {
+  if (to === "/") return pathname === "/"
+  return pathname === to || pathname.startsWith(`${to}/`)
+}
+
 export function Sidebar({
   open,
   onClose,
@@ -45,7 +60,7 @@ export function Sidebar({
   open: boolean
   onClose: () => void
 }) {
-  const [active, setActive] = useState("overview")
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
 
   return (
     <>
@@ -101,29 +116,51 @@ export function Sidebar({
               ) : null}
               {group.items.map((item) => {
                 const Icon = navIcons[item.icon]
-                const isActive = active === item.id
+                const route = navRoutes[item.id]
+                const isActive = route
+                  ? pathMatches(pathname, route)
+                  : false
+                const className = "nav-link w-full"
+
+                if (route) {
+                  return (
+                    <Link
+                      key={item.id}
+                      to={route}
+                      data-active={isActive}
+                      onClick={onClose}
+                      className={className}
+                    >
+                      <Icon className="size-4.5 shrink-0" />
+                      <span className="flex-1 truncate text-left">{item.label}</span>
+                      {item.badge ? (
+                        <span
+                          className={cn(
+                            "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold tabular-nums",
+                            isActive
+                              ? "bg-white/20 text-white"
+                              : "bg-white/8 text-[var(--sidebar-foreground)]/60",
+                          )}
+                        >
+                          {item.badge}
+                        </span>
+                      ) : null}
+                    </Link>
+                  )
+                }
+
                 return (
                   <button
                     key={item.id}
                     type="button"
                     data-active={isActive}
-                    onClick={() => {
-                      setActive(item.id)
-                      onClose()
-                    }}
-                    className="nav-link w-full"
+                    onClick={onClose}
+                    className={className}
                   >
                     <Icon className="size-4.5 shrink-0" />
                     <span className="flex-1 truncate text-left">{item.label}</span>
                     {item.badge ? (
-                      <span
-                        className={cn(
-                          "shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold tabular-nums",
-                          isActive
-                            ? "bg-white/20 text-white"
-                            : "bg-white/8 text-[var(--sidebar-foreground)]/60",
-                        )}
-                      >
+                      <span className="shrink-0 rounded-md bg-white/8 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-[var(--sidebar-foreground)]/60">
                         {item.badge}
                       </span>
                     ) : null}

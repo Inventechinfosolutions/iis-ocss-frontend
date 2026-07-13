@@ -14,6 +14,7 @@ import {
   UserCheck,
   Users,
 } from "lucide-react"
+import { Link } from "@tanstack/react-router"
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts"
 import {
   claimWindows,
@@ -136,8 +137,9 @@ export function RequirementInsights() {
               const CompanyIcon = theme.Icon
               return (
                 <li key={w.id}>
-                  <button
-                    type="button"
+                  <Link
+                    to="/claim-windows/$windowId"
+                    params={{ windowId: w.id }}
                     className="group relative flex w-full items-center gap-3 overflow-hidden rounded-2xl bg-card p-3 text-left ring-1 ring-border/60 transition-all hover:bg-muted/40 hover:shadow-sm"
                   >
                     <span
@@ -188,20 +190,21 @@ export function RequirementInsights() {
                         <ChevronRight className="size-3.5" />
                       </span>
                     </div>
-                  </button>
+                  </Link>
                 </li>
               )
             })}
           </ul>
 
-          <button
-            type="button"
+          <Link
+            to="/claim-windows/$windowId"
+            params={{ windowId: claimWindows[0]?.id ?? "cw1" }}
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0ea5e9]/10 px-3 py-2.5 text-sm font-semibold text-[#0369a1] transition-colors hover:bg-[#0ea5e9]/15 dark:text-[#7dd3fc]"
           >
             <List className="size-4" />
             View all invitation windows
             <ChevronRight className="ml-auto size-4 opacity-60" />
-          </button>
+          </Link>
         </article>
 
         {/* Eligibility */}
@@ -233,8 +236,8 @@ export function RequirementInsights() {
 
               return (
                 <li key={row.id}>
-                  <button
-                    type="button"
+                  <Link
+                    to="/reports/eligibility"
                     className={cn(
                       "group relative flex w-full items-center gap-3 overflow-hidden rounded-2xl bg-card p-3 text-left ring-1 transition-all hover:bg-muted/40 hover:shadow-sm",
                       theme.card,
@@ -277,20 +280,20 @@ export function RequirementInsights() {
                       </p>
                       <Trend className={cn("size-3.5", theme.value)} />
                     </div>
-                  </button>
+                  </Link>
                 </li>
               )
             })}
           </ul>
 
-          <button
-            type="button"
+          <Link
+            to="/reports/eligibility"
             className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#22c55e]/10 px-3 py-2.5 text-sm font-semibold text-[#15803d] transition-colors hover:bg-[#22c55e]/15 dark:text-[#6ee7b7]"
           >
             <BarChart3 className="size-4" />
             View detailed eligibility report
             <ChevronRight className="ml-auto size-4 opacity-60" />
-          </button>
+          </Link>
         </article>
 
         {/* Safety checks — donut + legend */}
