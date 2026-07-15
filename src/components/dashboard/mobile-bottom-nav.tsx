@@ -3,7 +3,6 @@ import {
   CreditCard,
   Home,
   MapPin,
-  ShieldAlert,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
@@ -12,7 +11,6 @@ const tabs = [
   { id: "overview", label: "Dashboard", icon: Home, target: "section-overview" },
   { id: "claims", label: "Claims", icon: ClipboardList, target: "section-claims" },
   { id: "map", label: "Map", icon: MapPin, target: "section-map" },
-  { id: "alerts", label: "Alerts", icon: ShieldAlert, target: "section-alerts" },
   { id: "payments", label: "Payments", icon: CreditCard, target: "section-payments" },
 ] as const
 

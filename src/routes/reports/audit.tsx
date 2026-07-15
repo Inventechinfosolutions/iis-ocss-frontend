@@ -117,8 +117,8 @@ function AuditReportPage() {
         title="Court & audit report"
         description="Case references and full activity history across court, audit, authority, and system events."
         icon={Scale}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#f43f5e"
       />
 

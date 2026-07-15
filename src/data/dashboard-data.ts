@@ -48,8 +48,7 @@ export type ReportItem = {
   title: string
   description: string
   href: string
-  /** TanStack route when the report has a live page */
-  to?:
+  to:
     | "/reports/scam-companies"
     | "/reports/victims"
     | "/reports/eligibility"
@@ -70,91 +69,80 @@ export const dashboardMeta = {
 export const kpiData: KpiItem[] = [
   {
     id: "fes",
-    label: "Scam companies handled",
+    label: "Fraudulent Entities Registered",
     value: feCompanies.length,
     format: "number",
     trend: 2,
     trendDirection: "up",
-    hint: "Companies under this case",
-    spark: [8, 9, 9, 10, 11, 11, feCompanies.length],
+    hint: "Under KPID proceedings",
+    spark: [8, 9.4, 8.6, 10.2, 9.5, 11.3, feCompanies.length],
     accent: "cyan",
   },
   {
     id: "depositors",
-    label: "Victims registered",
+    label: "Depositors Registered",
     value: 184_562,
     format: "number",
     trend: 1.4,
     trendDirection: "up",
-    hint: "People who lost money",
-    spark: [171000, 174200, 176800, 179100, 181300, 183000, 184562],
+    hint: "Registered in the system",
+    spark: [171000, 176800, 174400, 180200, 178600, 183400, 184562],
     accent: "cyan",
   },
   {
     id: "investments",
-    label: "Money victims deposited",
+    label: "Total Investment Amount",
     value: 4_286_40_00_000,
     format: "currency",
     trend: 0.3,
     trendDirection: "flat",
-    hint: "Total deposited earlier",
-    spark: [418, 421, 423, 424, 426, 427, 428],
+    hint: "Invested by depositors",
+    spark: [418, 424, 420, 426, 422, 427, 428],
     accent: "violet",
   },
   {
     id: "claims",
-    label: "Claims filed by victims",
+    label: "Claims Submitted",
     value: 156_842,
     format: "number",
     trend: 3.2,
     trendDirection: "up",
-    hint: "Requests for settlement",
-    spark: [131000, 138000, 143500, 147900, 151600, 154200, 156842],
+    hint: "Applications received",
+    spark: [131000, 142000, 138500, 149200, 146800, 154600, 156842],
     accent: "cyan",
   },
   {
     id: "liability",
-    label: "Still owed to victims",
+    label: "Outstanding Settlement Liability",
     value: 3_912_75_00_000,
     format: "currency",
     trend: 1.1,
     trendDirection: "down",
-    hint: "Amount not fully settled yet",
-    spark: [402, 399, 398, 396, 395, 393, 391],
+    hint: "Pending settlement",
+    spark: [402, 396, 399, 394, 397, 392, 391],
     accent: "rose",
   },
   {
     id: "recovered",
-    label: "Money recovered from assets",
+    label: "Recovered Amount from Attached Assets",
     value: 1_248_60_00_000,
     format: "currency",
     trend: 4.8,
     trendDirection: "up",
-    hint: "From seized property sales",
-    spark: [98, 104, 112, 118, 126, 138, 148],
+    hint: "From attachment & auction",
+    spark: [98, 118, 108, 128, 120, 140, 148],
     accent: "success",
   },
   {
     id: "settled",
-    label: "Money already paid to victims",
+    label: "Settlement Amount Disbursed",
     value: 986_45_00_000,
     format: "currency",
     trend: 5.6,
     trendDirection: "up",
-    hint: "Sent to bank accounts",
-    spark: [72, 78, 82, 86, 90, 94, 98],
+    hint: "Released to depositors",
+    spark: [72, 86, 80, 92, 88, 96, 98],
     accent: "success",
-  },
-  {
-    id: "recovery-rate",
-    label: "% of owed money recovered",
-    value: 31.9,
-    format: "percent",
-    trend: 1.8,
-    trendDirection: "up",
-    hint: "Recovered ÷ still owed",
-    spark: [26.4, 27.8, 28.9, 29.6, 30.4, 31.2, 31.9],
-    accent: "gold",
   },
 ]
 
@@ -230,7 +218,7 @@ export const funnelStages: FunnelStage[] = [
 export const financialMetrics: FinancialMetric[] = [
   {
     id: "available-fund",
-    label: "Cash ready to pay victims now",
+    label: "Funds Available for Immediate Settlement",
     value: 262_15_00_000,
     format: "currency",
     barPercent: 21,
@@ -238,7 +226,7 @@ export const financialMetrics: FinancialMetric[] = [
   },
   {
     id: "approved-liability",
-    label: "Amount approved for payment",
+    label: "Total Approved Settlement Amount",
     value: 2_864_20_00_000,
     format: "currency",
     barPercent: 72,
@@ -246,7 +234,7 @@ export const financialMetrics: FinancialMetric[] = [
   },
   {
     id: "previous-returns",
-    label: "Money company already paid victims earlier",
+    label: "Amount Already Received by Depositors",
     value: 184_30_00_000,
     format: "currency",
     barPercent: 15,
@@ -254,7 +242,7 @@ export const financialMetrics: FinancialMetric[] = [
   },
   {
     id: "net-payable",
-    label: "Still need to arrange for payment",
+    label: "Outstanding Settlement Liability",
     value: 1_877_75_00_000,
     format: "currency",
     barPercent: 65,
@@ -262,7 +250,7 @@ export const financialMetrics: FinancialMetric[] = [
   },
   {
     id: "equitable-ratio",
-    label: "Fair share % victims get today",
+    label: "Settlement Distribution Percentage",
     value: 34.5,
     format: "percent",
     barPercent: 34.5,
@@ -322,10 +310,34 @@ export const claimsByEntity = [
 ]
 
 export const assetRecovery = [
-  { stage: "Property seized", count: 428, percent: 100 },
-  { stage: "Price estimated", count: 386, percent: 90 },
-  { stage: "Sold in auction", count: 298, percent: 70 },
-  { stage: "Money received", count: 264, percent: 62 },
+  {
+    stage: "Property seized",
+    count: 428,
+    amount: 2_014_00_00_000,
+    percent: 100,
+    detail: "Assets attached and taken into custody",
+  },
+  {
+    stage: "Price estimated",
+    count: 386,
+    amount: 1_812_60_00_000,
+    percent: 90,
+    detail: "Official valuation done, ready for auction",
+  },
+  {
+    stage: "Sold in auction",
+    count: 298,
+    amount: 1_409_80_00_000,
+    percent: 70,
+    detail: "Properties sold through court auction",
+  },
+  {
+    stage: "Money received",
+    count: 264,
+    amount: 1_248_60_00_000,
+    percent: 62,
+    detail: "Sale proceeds deposited for victim payout",
+  },
 ]
 
 export const alerts: AlertItem[] = [
@@ -514,7 +526,7 @@ export const navGroups: NavGroup[] = [
     heading: "Checks & records",
     items: [
       { id: "alerts", label: "Alerts", icon: "alerts", badge: "5" },
-      { id: "reports", label: "Reports", icon: "reports" },
+      { id: "reports", label: "Detailed reports", icon: "reports" },
       { id: "audit", label: "Court & audit", icon: "audit" },
       { id: "master", label: "Master lists", icon: "master" },
     ],
@@ -665,9 +677,9 @@ export const eligibilityOutcomes = [
 
 /** Module 7 — Assessment outcome (eligible / not eligible) */
 export const safetyChecks = [
-  { id: "dup-fe", label: "Duplicate companies blocked", count: 4, hint: "Same FE not created twice" },
-  { id: "dup-person", label: "Duplicate victims merged", count: 1_842, hint: "Same Aadhaar / PAN linked" },
-  { id: "dup-claim", label: "Duplicate claims stopped", count: 128, hint: "Same claim filed twice" },
-  { id: "dup-pay", label: "Duplicate payments blocked", count: 37, hint: "Same payout not sent twice" },
-  { id: "mismatch", label: "Data mismatches flagged", count: 346, hint: "Bond ≠ bank statement" },
+  { id: "dup-fe", label: "Duplicate Fraudulent Entities Prevented", count: 4, hint: "Duplicate Fraudulent Entity records prevented during registration." },
+  { id: "dup-person", label: "Duplicate Depositor Profiles Merged", count: 1_842, hint: "Aadhaar, PAN, Mobile Number" },
+  { id: "dup-claim", label: "Duplicate Claims Prevented", count: 128, hint: "Duplicate claim applications detected before processing." },
+  { id: "dup-pay", label: "Duplicate Settlement Payments Prevented", count: 37, hint: "Duplicate payment attempts identified and blocked." },
+  { id: "mismatch", label: "Investment Data Mismatches Identified", count: 346, hint: "Differences detected between investment records and supporting documents." },
 ]

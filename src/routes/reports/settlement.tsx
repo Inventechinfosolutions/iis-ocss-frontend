@@ -118,8 +118,8 @@ function SettlementReportPage() {
         title="Settlement money report"
         description="How recovered funds are shared across scam companies and what is still left to pay victims."
         icon={Wallet}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#f59e0b"
       />
 

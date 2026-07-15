@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VictimsIndexRouteImport } from './routes/victims/index'
+import { Route as ReportsIndexRouteImport } from './routes/reports/index'
 import { Route as CompaniesIndexRouteImport } from './routes/companies/index'
 import { Route as ClaimsIndexRouteImport } from './routes/claims/index'
 import { Route as AssetsIndexRouteImport } from './routes/assets/index'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
 const VictimsIndexRoute = VictimsIndexRouteImport.update({
   id: '/victims/',
   path: '/victims/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsIndexRoute = ReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompaniesIndexRoute = CompaniesIndexRouteImport.update({
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/assets/': typeof AssetsIndexRoute
   '/claims/': typeof ClaimsIndexRoute
   '/companies/': typeof CompaniesIndexRoute
+  '/reports/': typeof ReportsIndexRoute
   '/victims/': typeof VictimsIndexRoute
   '/companies/$companyId/': typeof CompaniesCompanyIdIndexRoute
   '/companies/$companyId/schemes/$schemeId': typeof CompaniesCompanyIdSchemesSchemeIdRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/assets': typeof AssetsIndexRoute
   '/claims': typeof ClaimsIndexRoute
   '/companies': typeof CompaniesIndexRoute
+  '/reports': typeof ReportsIndexRoute
   '/victims': typeof VictimsIndexRoute
   '/companies/$companyId': typeof CompaniesCompanyIdIndexRoute
   '/companies/$companyId/schemes/$schemeId': typeof CompaniesCompanyIdSchemesSchemeIdRoute
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/assets/': typeof AssetsIndexRoute
   '/claims/': typeof ClaimsIndexRoute
   '/companies/': typeof CompaniesIndexRoute
+  '/reports/': typeof ReportsIndexRoute
   '/victims/': typeof VictimsIndexRoute
   '/companies/$companyId/': typeof CompaniesCompanyIdIndexRoute
   '/companies/$companyId/schemes/$schemeId': typeof CompaniesCompanyIdSchemesSchemeIdRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/assets/'
     | '/claims/'
     | '/companies/'
+    | '/reports/'
     | '/victims/'
     | '/companies/$companyId/'
     | '/companies/$companyId/schemes/$schemeId'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/assets'
     | '/claims'
     | '/companies'
+    | '/reports'
     | '/victims'
     | '/companies/$companyId'
     | '/companies/$companyId/schemes/$schemeId'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/assets/'
     | '/claims/'
     | '/companies/'
+    | '/reports/'
     | '/victims/'
     | '/companies/$companyId/'
     | '/companies/$companyId/schemes/$schemeId'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   AssetsIndexRoute: typeof AssetsIndexRoute
   ClaimsIndexRoute: typeof ClaimsIndexRoute
   CompaniesIndexRoute: typeof CompaniesIndexRoute
+  ReportsIndexRoute: typeof ReportsIndexRoute
   VictimsIndexRoute: typeof VictimsIndexRoute
 }
 
@@ -288,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/victims'
       fullPath: '/victims/'
       preLoaderRoute: typeof VictimsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports/': {
+      id: '/reports/'
+      path: '/reports'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof ReportsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies/': {
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssetsIndexRoute: AssetsIndexRoute,
   ClaimsIndexRoute: ClaimsIndexRoute,
   CompaniesIndexRoute: CompaniesIndexRoute,
+  ReportsIndexRoute: ReportsIndexRoute,
   VictimsIndexRoute: VictimsIndexRoute,
 }
 export const routeTree = rootRouteImport

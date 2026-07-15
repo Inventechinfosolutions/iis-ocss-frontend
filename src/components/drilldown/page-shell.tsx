@@ -51,6 +51,7 @@ export function PageHero({
     | "/victims"
     | "/claims"
     | "/assets"
+    | "/reports"
     | "/companies/$companyId"
   backParams?: { companyId: string }
   backLabel?: string

@@ -125,8 +125,8 @@ function PaymentReportPage() {
         title="Bank payment report"
         description="Money sent to victims with bank details and UTR references for reconciliation."
         icon={Landmark}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#0ea5e9"
       />
 

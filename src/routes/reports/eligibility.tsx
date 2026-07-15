@@ -125,8 +125,8 @@ function EligibilityReportPage() {
         title="Eligibility report"
         description="Who is eligible for settlement, who is not, and what is still pending officer assessment."
         icon={ClipboardCheck}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#22c55e"
       />
 

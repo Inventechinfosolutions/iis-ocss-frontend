@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   BarChart3,
   Building2,
   Calendar,
@@ -14,19 +15,17 @@ import {
   Wallet,
   type LucideIcon,
 } from "lucide-react"
+import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 import {
   Bar,
   BarChart,
   CartesianGrid,
-  Line,
-  LineChart,
   XAxis,
   YAxis,
 } from "recharts"
 import {
   assetRecovery,
   claimsByEntity,
-  claimsOverTime,
   fundComparison,
 } from "@/data/dashboard-data"
 import {
@@ -38,11 +37,6 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import { cn } from "@/lib/utils"
-
-const lineConfig = {
-  processed: { label: "Claims finished", color: "#3b82f6" },
-  submitted: { label: "New claims filed", color: "#f59e0b" },
-} satisfies ChartConfig
 
 const fundConfig = {
   liability: { label: "Still owed to victims", color: "#0ea5e9" },
@@ -120,65 +114,17 @@ export function ChartsSection() {
             Charts & trends
           </h2>
           <p className="text-sm text-muted-foreground">
-            Month-wise filing, money by company, claim counts, and property sales
+            Money by company, claim counts, and property sales
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
         <ChartCard
-          title="New claims vs finished claims (by month)"
-          subtitle="How many claims were filed and how many were completed each month"
-          delay={80}
-          className="h-full"
-        >
-          <div className="chart-scroll flex-1">
-            <div className="chart-scroll-inner">
-              <ChartContainer config={lineConfig} className="aspect-[16/10] w-full">
-                <LineChart data={claimsOverTime} margin={{ left: 4, right: 12, top: 12, bottom: 4 }}>
-                  <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="0" />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tick={{ fill: "#64748b", fontSize: 12 }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    width={40}
-                    tick={{ fill: "#64748b", fontSize: 11 }}
-                    tickFormatter={(v) => `${Math.round(v / 1000)}k`}
-                  />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Line
-                    type="monotone"
-                    dataKey="processed"
-                    stroke="var(--color-processed)"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: "#fff", stroke: "#3b82f6", strokeWidth: 2.5 }}
-                    activeDot={{ r: 6 }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="submitted"
-                    stroke="var(--color-submitted)"
-                    strokeWidth={3}
-                    dot={{ r: 4, fill: "#fff", stroke: "#f59e0b", strokeWidth: 2.5 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ChartContainer>
-            </div>
-          </div>
-        </ChartCard>
-
-        <ChartCard
           title="Money by scam company (₹ Crore)"
           subtitle="For each company: still owed, money recovered, and already paid"
           delay={140}
-          className="h-full"
+          className="h-full min-w-0"
         >
           <div className="chart-scroll flex-1">
             <div className="chart-scroll-inner">
@@ -232,7 +178,7 @@ export function ChartsSection() {
           title="How many claims per scam company"
           subtitle="Number of victim claims filed against each company"
           delay={200}
-          className="lg:col-span-2"
+          className="h-full min-w-0"
         >
           <ClaimsByCompanyChart />
         </ChartCard>
@@ -384,132 +330,139 @@ function AssetRecoveryFlow() {
     { ...assetRecovery[2], accent: "#60a5fa", Icon: Gavel },
     { ...assetRecovery[3], accent: "#22c55e", Icon: Wallet },
   ]
+  const seizedAmount = steps[0]?.amount ?? 1
+  const cashReceived = steps[steps.length - 1]
+  const conversion = (cashReceived.amount / seizedAmount) * 100
+  const pendingAmount = seizedAmount - cashReceived.amount
 
   return (
     <article
-      className="dashboard-panel stagger-in p-4 sm:p-6"
+      className="dashboard-panel stagger-in p-3 sm:p-6"
       style={{ animationDelay: "260ms" }}
     >
-      <div className="mb-6 flex items-start gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#0ea5e9]/15 text-[#0284c7]">
-          <Home className="size-5" />
-        </span>
-        <div>
-          <h3 className="font-display text-base font-semibold tracking-tight text-foreground">
-            Property → money for victims
-          </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground sm:text-sm">
-            Seized property steps: seize → price → sell → receive cash
-          </p>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-2 sm:mb-5 sm:gap-3">
+        <div className="flex min-w-0 items-start gap-2.5 sm:gap-3">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#0ea5e9]/15 text-[#0284c7] ring-1 ring-[#0ea5e9]/20 sm:size-10 sm:rounded-xl">
+            <Home className="size-4 sm:size-5" />
+          </span>
+          <div className="min-w-0">
+            <h3 className="font-display text-sm font-semibold tracking-tight text-foreground sm:text-base">
+              From seized property to cash
+            </h3>
+            <p className="mt-0.5 hidden text-xs text-muted-foreground sm:block sm:text-sm">
+              Rupee value of attached assets at each recovery step
+            </p>
+          </div>
         </div>
+        <p className="rounded-full bg-success/10 px-2 py-1 text-[11px] text-muted-foreground ring-1 ring-success/20 sm:px-3 sm:py-1.5 sm:text-sm">
+          Cash received:{" "}
+          <span className="font-semibold text-success tabular-nums">
+            {formatINR(cashReceived.amount)}
+          </span>{" "}
+          ({formatPercent(conversion)} of seized)
+        </p>
       </div>
 
-      {/* Mobile: vertical steps */}
-      <ol className="space-y-3 sm:hidden">
+      <ol className="space-y-2 sm:space-y-3">
         {steps.map((step, index) => {
           const Icon = step.Icon
+          const prev = steps[index - 1]
+          const droppedAmount = prev ? prev.amount - step.amount : 0
+          const stepThrough = prev ? (step.amount / prev.amount) * 100 : 100
+          const labelInside = step.percent >= 28
+
           return (
-            <li
-              key={step.stage}
-              className="flex items-center gap-3 rounded-2xl bg-muted/40 px-3 py-3 ring-1 ring-border/50"
-            >
-              <div
-                className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white shadow-md"
-                style={{ background: step.accent }}
-              >
-                {index + 1}
-              </div>
-              <span
-                className="flex size-9 shrink-0 items-center justify-center rounded-xl"
-                style={{ background: `${step.accent}18`, color: step.accent }}
-              >
-                <Icon className="size-4" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-foreground">{step.stage}</p>
-                <p className="text-xs text-muted-foreground">
-                  {step.count.toLocaleString("en-IN")} properties
-                </p>
-                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="funnel-bar h-full rounded-full"
-                    style={{
-                      width: `${step.percent}%`,
-                      background: step.accent,
-                      animationDelay: `${400 + index * 80}ms`,
-                    }}
-                  />
+            <li key={step.stage} className="space-y-1 sm:space-y-2">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <span
+                  className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg sm:size-8 sm:rounded-xl"
+                  style={{ background: `${step.accent}18`, color: step.accent }}
+                >
+                  <Icon className="size-3.5 sm:size-4" strokeWidth={2} />
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-semibold text-foreground sm:text-sm">
+                        <span className="mr-1 text-muted-foreground tabular-nums sm:mr-1.5">
+                          {index + 1}.
+                        </span>
+                        {step.stage}
+                      </p>
+                      <p className="mt-0.5 hidden text-[11px] text-muted-foreground sm:block">
+                        {step.detail}
+                        <span className="text-muted-foreground/80">
+                          {" "}
+                          · {formatNumber(step.count)} properties
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                      <span className="text-[13px] font-semibold tabular-nums text-foreground sm:text-sm">
+                        {formatINR(step.amount)}
+                      </span>
+                      <span
+                        className="text-[11px] font-semibold tabular-nums sm:text-xs"
+                        style={{ color: step.accent }}
+                      >
+                        {formatPercent(step.percent)} of seized
+                      </span>
+                      {droppedAmount > 0 ? (
+                        <span className="hidden items-center gap-0.5 text-[11px] font-medium text-muted-foreground tabular-nums sm:inline-flex">
+                          <ArrowRight className="size-3" />
+                          {formatINR(droppedAmount)} not moved yet
+                          <span className="text-muted-foreground/80">
+                            ({formatPercent(stepThrough)} moved)
+                          </span>
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p
-                className="shrink-0 text-xs font-semibold tabular-nums"
-                style={{ color: step.accent }}
-              >
-                {step.percent}%
-              </p>
+
+              <div className="relative h-7 overflow-hidden rounded-lg bg-muted/60 ring-1 ring-border/50 sm:h-11 sm:rounded-xl">
+                <div
+                  className="funnel-bar absolute inset-y-0 left-0 flex items-center justify-end rounded-lg px-2 sm:rounded-xl sm:px-3"
+                  style={{
+                    width: `${Math.max(step.percent, 4)}%`,
+                    background: `linear-gradient(90deg, color-mix(in srgb, ${step.accent} 18%, transparent), color-mix(in srgb, ${step.accent} 45%, transparent))`,
+                    borderRight: `2px solid color-mix(in srgb, ${step.accent} 70%, transparent)`,
+                    animationDelay: `${index * 70}ms`,
+                  }}
+                >
+                  {labelInside ? (
+                    <span className="hidden text-sm font-semibold text-foreground tabular-nums sm:inline">
+                      {formatINR(step.amount)}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
             </li>
           )
         })}
       </ol>
 
-      {/* Tablet+: horizontal flow */}
-      <div className="hidden sm:block">
-        <ol className="relative flex items-start">
-          {steps.map((step, index) => {
-            const Icon = step.Icon
-            return (
-              <li key={step.stage} className="relative flex flex-1 flex-col items-center px-2 md:px-3">
-                {index < steps.length - 1 ? (
-                  <div
-                    className="absolute top-5 left-[calc(50%+22px)] h-0.5 w-[calc(100%-44px)]"
-                    style={{
-                      background: `linear-gradient(90deg, ${step.accent}, ${steps[index + 1].accent})`,
-                      opacity: 0.45,
-                    }}
-                  />
-                ) : null}
-
-                <div
-                  className="relative z-10 flex size-11 items-center justify-center rounded-full text-sm font-bold text-white shadow-md"
-                  style={{ background: step.accent }}
-                >
-                  {index + 1}
-                </div>
-
-                <span
-                  className="mt-3 flex size-9 items-center justify-center rounded-xl"
-                  style={{ background: `${step.accent}18`, color: step.accent }}
-                >
-                  <Icon className="size-4" />
-                </span>
-
-                <p className="mt-2.5 text-center text-sm font-semibold text-foreground">
-                  {step.stage}
-                </p>
-                <p className="mt-0.5 text-center text-xs text-muted-foreground">
-                  {step.count.toLocaleString("en-IN")} properties
-                </p>
-
-                <div className="mt-3 h-1.5 w-full max-w-[120px] overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="funnel-bar h-full rounded-full"
-                    style={{
-                      width: `${step.percent}%`,
-                      background: step.accent,
-                      animationDelay: `${400 + index * 80}ms`,
-                    }}
-                  />
-                </div>
-                <p
-                  className="mt-1.5 text-xs font-semibold tabular-nums"
-                  style={{ color: step.accent }}
-                >
-                  {step.percent}%
-                </p>
-              </li>
-            )
-          })}
-        </ol>
+      <div className="mt-3 overflow-hidden rounded-lg bg-[#ecfdf5] ring-1 ring-[#22c55e]/20 sm:mt-4 sm:rounded-xl dark:bg-[#22c55e]/10">
+        <p className="animate-marquee whitespace-nowrap py-2 text-[11px] leading-relaxed text-[#166534] sm:py-2.5 sm:text-xs dark:text-[#86efac]">
+          <span className="inline-block px-3">
+            Of {formatINR(seizedAmount)} in seized assets,{" "}
+            <span className="font-semibold tabular-nums">
+              {formatINR(cashReceived.amount)}
+            </span>{" "}
+            sale money has been received. {formatINR(pendingAmount)} is still waiting at
+            valuation, auction, or payment collection.
+          </span>
+          <span className="inline-block px-3" aria-hidden>
+            Of {formatINR(seizedAmount)} in seized assets,{" "}
+            <span className="font-semibold tabular-nums">
+              {formatINR(cashReceived.amount)}
+            </span>{" "}
+            sale money has been received. {formatINR(pendingAmount)} is still waiting at
+            valuation, auction, or payment collection.
+          </span>
+        </p>
       </div>
     </article>
   )

@@ -117,8 +117,8 @@ function VictimReportPage() {
         title="Report by victim"
         description="Person-wise claim exposure — investments, returns already taken, and what is still outstanding."
         icon={UserRound}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#6366f1"
       />
 

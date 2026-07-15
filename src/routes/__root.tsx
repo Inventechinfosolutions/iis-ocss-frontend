@@ -23,7 +23,7 @@ function RootLayout() {
       <TooltipProvider>
         <div className="min-h-svh min-w-0">
           <Sidebar open={navOpen} onClose={() => setNavOpen(false)} />
-          <div className="min-w-0 lg:pl-[220px]">
+          <div className="min-w-0 lg:pl-[240px]">
             <Topbar onMenu={() => setNavOpen(true)} />
             <Outlet />
           </div>

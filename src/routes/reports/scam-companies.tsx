@@ -112,8 +112,8 @@ function ScamCompanyReportPage() {
         title="Report by scam company"
         description="Claims, recovered money, and payouts for each fraudulent entity under the Karnataka settlement programme."
         icon={FileBarChart2}
-        backTo="/"
-        backLabel="Back to overview"
+        backTo="/reports"
+        backLabel="Back to detailed reports"
         accent="#0ea5e9"
       />
 
