@@ -181,7 +181,7 @@ export function SafetyChecksChart({ className }: { className?: string }) {
       </div>
 
       <div className="flex flex-1 flex-col items-center gap-2 sm:gap-3">
-        <div className="relative size-[110px] shrink-0 sm:size-[140px]">
+        <div className="relative size-[128px] shrink-0 sm:size-[140px]">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-[18%] rounded-full"
@@ -214,8 +214,8 @@ export function SafetyChecksChart({ className }: { className?: string }) {
                 nameKey="label"
                 cx="50%"
                 cy="50%"
-                innerRadius="58%"
-                outerRadius="86%"
+                innerRadius="62%"
+                outerRadius="88%"
                 paddingAngle={3}
                 cornerRadius={5}
                 stroke="none"
@@ -234,11 +234,12 @@ export function SafetyChecksChart({ className }: { className?: string }) {
             </PieChart>
           </ResponsiveContainer>
 
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-2 text-center">
-            <span className="text-[8px] font-medium leading-tight text-muted-foreground sm:text-[9px]">
-              Total Validations
+          <div className="pointer-events-none absolute inset-[26%] flex flex-col items-center justify-center text-center sm:inset-[24%]">
+            <span className="text-[6.5px] font-medium leading-[1.1] text-muted-foreground sm:text-[9px] sm:leading-tight">
+              Total
+              <span className="block sm:inline"> Validations</span>
             </span>
-            <span className="font-display text-xl font-semibold tracking-tight text-foreground tabular-nums sm:text-2xl">
+            <span className="mt-0.5 font-display text-[15px] font-semibold leading-none tracking-tight text-foreground tabular-nums sm:mt-0 sm:text-2xl">
               {formatNumber(total)}
             </span>
           </div>

@@ -74,7 +74,7 @@ function CompaniesPage() {
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
         eyebrow="Settlement · Karnataka"
-        title="Scam companies"
+        title="Fraudulent entities"
         description="Fraudulent entities in the settlement programme — victims, deposits, and recovery."
         icon={Landmark}
         backTo="/"

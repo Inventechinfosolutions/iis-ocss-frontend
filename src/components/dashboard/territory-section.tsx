@@ -48,20 +48,22 @@ export function TerritorySection({ className }: { className?: string }) {
           <MapPin className="size-3.5 sm:size-4" />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <div className="flex items-center justify-between gap-2">
             <h2
               id="territory-heading"
-              className="font-display text-sm font-semibold tracking-tight text-foreground sm:text-base"
+              className="min-w-0 truncate font-display text-sm font-semibold tracking-tight text-foreground sm:text-base"
             >
               Where claims come from
             </h2>
-            <div className="flex shrink-0 flex-wrap items-center justify-end gap-1 sm:gap-1.5">
-              <span className="inline-flex items-center gap-1 rounded-full bg-[#3b82f6]/10 px-2 py-0.5 text-[9px] font-semibold tracking-wide text-[#1d4ed8] uppercase ring-1 ring-[#3b82f6]/20 sm:px-2.5 sm:py-1 sm:text-[10px]">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full bg-[#3b82f6]/10 px-1.5 py-0.5 text-[8px] font-semibold tracking-wide text-[#1d4ed8] uppercase ring-1 ring-[#3b82f6]/20 sm:px-2.5 sm:py-1 sm:text-[10px]">
                 <Sparkles className="size-2.5 sm:size-3" />
                 30 districts
               </span>
-              <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[9px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border/60 sm:px-2.5 sm:py-1 sm:text-[10px]">
-                {formatNumber(totalClaims)} claims mapped
+              <span className="inline-flex items-center rounded-full bg-muted px-1.5 py-0.5 text-[8px] font-semibold tabular-nums text-muted-foreground ring-1 ring-border/60 sm:px-2.5 sm:py-1 sm:text-[10px]">
+                {formatNumber(totalClaims)}{" "}
+                <span className="sm:hidden">claims</span>
+                <span className="hidden sm:inline">claims mapped</span>
               </span>
             </div>
           </div>
