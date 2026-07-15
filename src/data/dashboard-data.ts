@@ -386,7 +386,7 @@ export const alerts: AlertItem[] = [
 export const reports: ReportItem[] = [
   {
     id: "fe",
-    title: "Report by scam company",
+    title: "Report by fraudulent entities",
     description: "Claims, recovered money, and payouts for each company",
     href: "/reports/scam-companies",
     to: "/reports/scam-companies",
@@ -512,7 +512,7 @@ export const navGroups: NavGroup[] = [
   {
     heading: "Claim settlement",
     items: [
-      { id: "entities", label: "Scam companies", icon: "entities", badge: String(feCompanies.length) },
+      { id: "entities", label: "Fraudulent entities", icon: "entities", badge: String(feCompanies.length) },
       { id: "depositors", label: "Victims", icon: "depositors" },
       { id: "claims", label: "Claims", icon: "claims" },
       { id: "verification", label: "Document check", icon: "verification", badge: "42K" },

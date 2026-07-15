@@ -80,7 +80,7 @@ function VictimDetailPage() {
       <PageHero
         eyebrow="Settlement · Victim profile"
         title={victim.name}
-        description="Identity, money put into scam schemes, returns already taken, and what is still outstanding."
+        description="Identity, money put into fraudulent entities, returns already taken, and what is still outstanding."
         icon={Users}
         backTo="/victims"
         backLabel="All victims"

@@ -55,7 +55,7 @@ function AssetsPage() {
       <PageHero
         eyebrow="Asset recovery"
         title="Money recovered from assets"
-        description="Frozen property, bank accounts, and other assets of scam companies — and how much money was recovered from each."
+        description="Frozen property, bank accounts, and other assets of fraudulent entities — and how much money was recovered from each."
         icon={CircleDollarSign}
         backTo="/"
         accent="#22c55e"
@@ -89,7 +89,7 @@ function AssetsPage() {
       </div>
 
       <SectionCard
-        title="Assets by scam company"
+        title="Assets by fraudulent entities"
         description="Expand a company to see every asset and the amount recovered through it"
       >
         <ul className="space-y-3">

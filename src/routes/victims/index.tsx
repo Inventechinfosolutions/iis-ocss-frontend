@@ -71,7 +71,7 @@ function VictimsPage() {
       <PageHero
         eyebrow="Depositors"
         title="Victims registered"
-        description="People who lost money to scam fraudulent entities. Search by name, PAN, Aadhaar, or customer ID, then open a person to see their investments and returns."
+        description="People who lost money to fraudulent entities. Search by name, PAN, Aadhaar, or customer ID, then open a person to see their investments and returns."
         icon={Users}
         backTo="/"
         accent="#6366f1"

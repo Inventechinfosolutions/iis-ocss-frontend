@@ -112,7 +112,7 @@ export function getFinanceMetricDetail(
         metric,
         eyebrow: "Money available · Cash pool",
         description:
-          "Cash that can be disbursed to eligible victims right now, allocated from recovered assets by scam company.",
+          "Cash that can be disbursed to eligible victims right now, allocated from recovered assets by fraudulent entities.",
         accent,
         soft,
         highlights: [
@@ -145,7 +145,7 @@ export function getFinanceMetricDetail(
             soft: "#dcfce7",
           },
         ],
-        sectionTitle: "Cash ready by scam company",
+        sectionTitle: "Cash ready by fraudulent entities",
         sectionHint:
           "Share of liquid cash attributed from each entity’s recovered assets.",
         rows,
@@ -186,7 +186,7 @@ export function getFinanceMetricDetail(
           {
             label: "Approved for payment",
             value: formatINR(metric.value),
-            hint: "Across all scam companies",
+            hint: "Across all fraudulent entities",
             color: accent,
             soft,
           },
@@ -247,7 +247,7 @@ export function getFinanceMetricDetail(
         metric,
         eyebrow: "Money available · Earlier returns",
         description:
-          "Money scam companies already paid to victims before OCSS settlement — deducted when calculating fair share.",
+          "Money fraudulent entities already paid to victims before OCSS settlement — deducted when calculating fair share.",
         accent,
         soft,
         highlights: [
@@ -285,7 +285,7 @@ export function getFinanceMetricDetail(
         ],
         sectionTitle: "Earlier returns by company",
         sectionHint:
-          "Estimated pre-OCSS returns attributed to each scam company.",
+          "Estimated pre-OCSS returns attributed to each fraudulent entity.",
         rows,
       }
     }
@@ -359,7 +359,7 @@ export function getFinanceMetricDetail(
         ],
         sectionTitle: "Funding gap by company",
         sectionHint:
-          "Where additional funds are still required across scam companies.",
+          "Where additional funds are still required across  fraudulent entities.",
         rows,
       }
     }

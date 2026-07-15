@@ -69,7 +69,7 @@ function ScamCompanyReportPage() {
   const metrics = [
     {
       id: "entities",
-      label: "Scam companies",
+      label: "Scam fraudulent entities",
       value: formatNumber(feCompanies.length),
       hint: "Entities in this report",
       icon: Building2,
@@ -109,7 +109,7 @@ function ScamCompanyReportPage() {
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
         eyebrow="OCSS · Detailed report"
-        title="Report by scam company"
+        title="Report by fraudulent entities"
         description="Claims, recovered money, and payouts for each fraudulent entity under the Karnataka settlement programme."
         icon={FileBarChart2}
         backTo="/reports"
@@ -323,7 +323,7 @@ function ScamCompanyReportPage() {
         )}
       >
         This report summarises claims, asset recovery, and victim payouts by
-        scam company for OCSS demonstration. Figures are sample operational
+        fraudulent entities for OCSS demonstration. Figures are sample operational
         data and not for judicial filing.
       </p>
     </PageShell>

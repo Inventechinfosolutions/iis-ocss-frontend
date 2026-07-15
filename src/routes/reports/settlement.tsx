@@ -116,7 +116,7 @@ function SettlementReportPage() {
       <PageHero
         eyebrow="OCSS · Detailed report"
         title="Settlement money report"
-        description="How recovered funds are shared across scam companies and what is still left to pay victims."
+        description="How recovered funds are shared across fraudulent entities and what is still left to pay victims."
         icon={Wallet}
         backTo="/reports"
         backLabel="Back to detailed reports"

@@ -121,7 +121,7 @@ export function ChartsSection() {
 
       <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch">
         <ChartCard
-          title="Money by scam fraudulent entity (₹ Crore)"
+          title="Money by fraudulent entities (₹ Crore)"
           subtitle="For each company: still owed, money recovered, and already paid"
           delay={140}
           className="h-full min-w-0"
@@ -175,7 +175,7 @@ export function ChartsSection() {
         </ChartCard>
 
         <ChartCard
-          title="How many claims per scam fraudulent entity"
+          title="How many claims per fraudulent entities"
           subtitle="Number of victim claims filed against each company"
           delay={200}
           className="h-full min-w-0"
