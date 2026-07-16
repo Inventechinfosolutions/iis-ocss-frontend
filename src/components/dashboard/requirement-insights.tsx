@@ -125,10 +125,10 @@ export function RequirementInsights() {
           id="claim-windows-heading"
           className="font-display text-base font-semibold tracking-tight text-foreground"
         >
-          Open claim invitation windows
+          Open claim notification windows
         </h2>
         <p className="text-xs text-muted-foreground">
-          When victims can file claims for each company — hover to pause
+          When depositors can file claims for each fraudulent entity
         </p>
       </div>
 
@@ -164,18 +164,16 @@ export function SafetyChecksChart({ className }: { className?: string }) {
       )}
       style={{ animationDelay: "120ms" }}
     >
-      <div className="mb-2 flex items-start gap-2 sm:mb-3 sm:gap-2.5">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-[#0ea5e9]/12 text-[#0284c7] sm:size-8">
-          <ShieldCheck className="size-3.5 sm:size-4" />
+      <div className="mb-1.5 flex items-start gap-1.5 sm:mb-2 sm:gap-2">
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-[#0ea5e9]/12 text-[#0284c7] sm:size-7">
+          <ShieldCheck className="size-3 sm:size-3.5" />
         </span>
         <div className="min-w-0">
-          <h3 className="font-display text-sm font-semibold text-foreground sm:text-base">
-            AI-Based Validation & Fraud Prevention
+          <h3 className="font-display text-xs font-semibold tracking-tight text-foreground sm:text-sm">
+            Automated Validation & Duplicate Prevention
           </h3>
-          <p className="mt-0.5 line-clamp-2 hidden text-[11px] text-muted-foreground sm:block">
-            The system automatically validates depositor, investment, claim, and
-            payment records to eliminate duplicates, detect inconsistencies, and
-            ensure accurate claim settlement
+          <p className="mt-0.5 hidden text-[10px] text-muted-foreground sm:block">
+            Catches duplicate and mismatched depositor, claim, and payment records
           </p>
         </div>
       </div>

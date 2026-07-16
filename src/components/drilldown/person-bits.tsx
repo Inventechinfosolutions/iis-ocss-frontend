@@ -234,7 +234,7 @@ export function InvestmentList({
 
                 <div className="mt-4 rounded-md bg-white/80 px-3.5 py-3 ring-1 ring-black/[0.04] backdrop-blur-sm dark:bg-white/[0.04] dark:ring-white/[0.06]">
                   <p className="text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase">
-                    Money invested
+                    Money deposited
                   </p>
                   <p
                     className="mt-1 font-display text-2xl font-semibold tracking-tight tabular-nums"
@@ -255,7 +255,7 @@ export function InvestmentList({
                   </div>
                   <div className="rounded-md bg-muted/50 px-2.5 py-2.5 dark:bg-white/[0.04]">
                     <p className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-                      Still owed
+                      Outstanding liability
                     </p>
                     <p className="mt-1 text-[13px] font-semibold tabular-nums text-rose-600 dark:text-rose-400">
                       {formatINR(outstanding, false)}

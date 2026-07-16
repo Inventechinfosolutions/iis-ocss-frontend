@@ -91,10 +91,10 @@ function CompanyDetailPage() {
       <PageHero
         eyebrow="Settlement · Fraudulent entity"
         title={company.name}
-        description="Victims, deposits, recovery, and every scheme this company ran under the settlement programme."
+        description="Depositors, deposits, asset recovery, and every scheme operated by this fraudulent entity under the settlement programme."
         icon={Landmark}
         backTo="/companies"
-        backLabel="All companies"
+        backLabel="All fraudulent entities"
         accent={company.accent}
       />
 

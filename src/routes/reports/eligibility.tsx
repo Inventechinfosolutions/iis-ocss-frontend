@@ -18,11 +18,7 @@ import {
   SectionCard,
   ViewToggle,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { eligibilityOutcomes } from "@/data/dashboard-data"
 import {
   type EligibilityStatus,
@@ -69,7 +65,7 @@ function EligibilityReportPage() {
     })
   }, [rows, filter, query])
 
-  const sampleCounts = useMemo(() => {
+  const rowCounts = useMemo(() => {
     const eligible = rows.filter((r) => r.status === "Eligible").length
     const notEligible = rows.filter((r) => r.status === "Not eligible").length
     const waiting = rows.filter(
@@ -84,7 +80,7 @@ function EligibilityReportPage() {
       id: "eligible",
       label: eligibilityOutcomes[0].label,
       value: formatNumber(eligibilityOutcomes[0].count),
-      hint: `${sampleCounts.eligible} in sample rows · ${eligibilityOutcomes[0].hint}`,
+      hint: `${rowCounts.eligible} in current view · ${eligibilityOutcomes[0].hint}`,
       icon: BadgeCheck,
       color: "#16a34a",
       soft: "#dcfce7",
@@ -93,7 +89,7 @@ function EligibilityReportPage() {
       id: "not",
       label: eligibilityOutcomes[1].label,
       value: formatNumber(eligibilityOutcomes[1].count),
-      hint: `${sampleCounts.notEligible} in sample rows · ${eligibilityOutcomes[1].hint}`,
+      hint: `${rowCounts.notEligible} in current view · ${eligibilityOutcomes[1].hint}`,
       icon: ShieldX,
       color: "#f43f5e",
       soft: "#ffe4e6",
@@ -102,16 +98,16 @@ function EligibilityReportPage() {
       id: "waiting",
       label: eligibilityOutcomes[2].label,
       value: formatNumber(eligibilityOutcomes[2].count),
-      hint: `${sampleCounts.waiting} in sample rows · ${eligibilityOutcomes[2].hint}`,
+      hint: `${rowCounts.waiting} in current view · ${eligibilityOutcomes[2].hint}`,
       icon: Hourglass,
       color: "#f59e0b",
       soft: "#fef3c7",
     },
     {
-      id: "sample",
+      id: "listed",
       label: "Claims in this view",
       value: formatNumber(filtered.length),
-      hint: "Drill-down sample for officers",
+      hint: "Claims shown in the current filter",
       icon: FileStack,
       color: "#22c55e",
       soft: "#dcfce7",
@@ -121,7 +117,7 @@ function EligibilityReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
+        eyebrow="CSMS · Detailed report"
         title="Eligibility report"
         description="Who is eligible for settlement, who is not, and what is still pending officer assessment."
         icon={ClipboardCheck}
@@ -129,8 +125,6 @@ function EligibilityReportPage() {
         backLabel="Back to detailed reports"
         accent="#22c55e"
       />
-
-      <ReportMeta label="Eligibility report" accent="#22c55e" />
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((m, i) => (
@@ -147,7 +141,7 @@ function EligibilityReportPage() {
           <ReportSectionIntro
             title="Claim eligibility register"
             countLabel={`${filtered.length} claims`}
-            description="Filter by outcome status. Open a claim for investments behind the assessment."
+            description="Filter by outcome status. Open a claim for deposits behind the assessment."
             accent="#15803d"
             soft="#dcfce7"
           />
@@ -187,7 +181,7 @@ function EligibilityReportPage() {
                       emphasize: true,
                     },
                     { value: r.claimId, label: "claim ID" },
-                    { value: r.company, label: "company" },
+                    { value: r.company, label: "entity" },
                     { value: r.district, label: "district" },
                   ]}
                 />
@@ -205,7 +199,7 @@ function EligibilityReportPage() {
             columns={[
               { key: "status", header: "Status", align: "left" },
               { key: "amount", header: "Claim amount", align: "right" },
-              { key: "company", header: "Company", align: "left" },
+              { key: "company", header: "Fraudulent entity", align: "left" },
               { key: "district", header: "District", align: "left" },
             ]}
             rows={filtered.map((r) => ({
@@ -231,7 +225,6 @@ function EligibilityReportPage() {
         )}
       </SectionCard>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

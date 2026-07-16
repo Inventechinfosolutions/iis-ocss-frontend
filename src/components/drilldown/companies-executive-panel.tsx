@@ -9,14 +9,13 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import type { FeCompany } from "@/data/kpi-drilldown-data"
-import { feCompanies } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 export function ExecutiveMetricTile({
   label,
   value,
-  hint,
   icon: Icon,
   color,
   soft,
@@ -25,7 +24,7 @@ export function ExecutiveMetricTile({
 }: {
   label: string
   value: string
-  hint: string
+  hint?: string
   icon: LucideIcon
   color: string
   soft: string
@@ -48,26 +47,27 @@ export function ExecutiveMetricTile({
         }}
       />
       <div className="relative flex items-start justify-between gap-3">
-        <div
-          className="flex size-10 items-center justify-center rounded-md text-white"
-          style={{
-            background: `linear-gradient(145deg, ${color}, ${color}cc)`,
-          }}
-        >
-          <Icon className="size-5" strokeWidth={1.9} />
+        <div className="flex min-w-0 items-center gap-3">
+          <div
+            className="flex size-10 shrink-0 items-center justify-center rounded-md text-white"
+            style={{
+              background: `linear-gradient(145deg, ${color}, ${color}cc)`,
+            }}
+          >
+            <Icon className="size-5" strokeWidth={1.9} />
+          </div>
+          <p className="text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase leading-snug">
+            {label}
+          </p>
         </div>
-        <TrendingUp className="size-4 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
+        <TrendingUp className="size-4 shrink-0 text-muted-foreground/50 opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
-      <p className="relative mt-4 text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase">
-        {label}
-      </p>
       <p
-        className="relative mt-1.5 font-display text-[1.65rem] leading-none font-semibold tracking-tight tabular-nums"
+        className="relative mt-3 font-display text-[1.65rem] leading-none font-semibold tracking-tight tabular-nums"
         style={{ color }}
       >
         {value}
       </p>
-      <p className="relative mt-2 text-xs text-muted-foreground">{hint}</p>
     </li>
   )
 }
@@ -86,34 +86,34 @@ export function CompaniesExecutivePanel({
   const metrics = [
     {
       id: "entities",
-      label: "Entities under programme",
+      label: kpiLabels.fes,
       value: formatNumber(feCompanies.length),
-      hint: "Active fraudulent companies",
+      hint: "Under KPID proceedings",
       icon: Building2,
       color: "#3b82f6",
       soft: "#dbeafe",
     },
     {
       id: "victims",
-      label: "Depositors affected",
+      label: kpiLabels.depositors,
       value: formatNumber(totalVictims),
-      hint: "Across all entities",
+      hint: "Registered in the system",
       icon: Users,
       color: "#0ea5e9",
       soft: "#e0f2fe",
     },
     {
       id: "deposited",
-      label: "Total money deposited",
+      label: kpiLabels.investments,
       value: formatINR(totalAmount),
-      hint: "Gross exposure",
+      hint: "Deposited by depositors",
       icon: Scale,
       color: "#f59e0b",
       soft: "#fef3c7",
     },
     {
       id: "recovered",
-      label: "Assets recovered",
+      label: kpiLabels.recovered,
       value: formatINR(totalRecovered),
       hint: `${formatPercent(recoveryRate)} of deposits`,
       icon: IndianRupee,
@@ -153,14 +153,14 @@ export function CompanyDetailMetrics({ company }: { company: FeCompany }) {
       id: "victims",
       label: "Depositors affected",
       value: formatNumber(company.victims),
-      hint: "Victims linked to this entity",
+      hint: "Depositors linked to this entity",
       icon: Users,
       color: "#0ea5e9",
       soft: "#e0f2fe",
     },
     {
       id: "deposited",
-      label: "Total money deposited",
+      label: "Total deposits",
       value: formatINR(company.totalAmount),
       hint: "Gross exposure under schemes",
       icon: Wallet,
@@ -178,7 +178,7 @@ export function CompanyDetailMetrics({ company }: { company: FeCompany }) {
     },
     {
       id: "owed",
-      label: "Still owed",
+      label: "Outstanding liability",
       value: formatINR(company.liability),
       hint: "Outstanding liability",
       icon: Building2,
@@ -187,7 +187,7 @@ export function CompanyDetailMetrics({ company }: { company: FeCompany }) {
     },
     {
       id: "recovered",
-      label: "Assets recovered",
+      label: kpiLabels.recovered,
       value: formatINR(company.recovered),
       hint: `${formatPercent(recoveryRate)} of deposits`,
       icon: IndianRupee,
@@ -196,7 +196,7 @@ export function CompanyDetailMetrics({ company }: { company: FeCompany }) {
     },
     {
       id: "settled",
-      label: "Paid to victims",
+      label: kpiLabels.settled,
       value: formatINR(company.settled),
       hint: `${formatPercent(settleRate)} of recovered`,
       icon: Gem,
@@ -236,15 +236,15 @@ export function CompanySchemesIntro({
     <div className={cn("min-w-0", className)}>
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-          Schemes people invested in
+          Schemes under this entity
         </h2>
         <span className="inline-flex items-center rounded-md bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#1d4ed8] uppercase dark:bg-[#1e3a5f]/50 dark:text-sky-300">
           {count} scheme{count === 1 ? "" : "s"}
         </span>
       </div>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        {formatINR(totalAmount)} deposited across these schemes. Open a plan to
-        see depositors affected and sample investment records.
+        {formatINR(totalAmount)} deposited across these schemes. Open a scheme to
+        see depositors affected and deposit records.
       </p>
     </div>
   )
@@ -263,15 +263,15 @@ export function CompanyDirectoryIntro({
     <div className={cn("min-w-0", className)}>
       <div className="flex flex-wrap items-center gap-2">
         <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-          Company directory
+          Fraudulent entity directory
         </h2>
         <span className="inline-flex items-center rounded-md bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#1d4ed8] uppercase dark:bg-[#1e3a5f]/50 dark:text-sky-300">
           {count} listed
         </span>
       </div>
       <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-        {formatINR(totalAmount)} deposited across these entities. Open a company for
-        schemes, victims, claims, and recovery detail.
+        {formatINR(totalAmount)} deposited across these entities. Open a fraudulent entity for
+        schemes, depositors, claims, and recovery detail.
       </p>
     </div>
   )

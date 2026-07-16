@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { FileStack, Search, Wallet } from "lucide-react"
-import { claimRecords, matchesPersonSearch } from "@/data/kpi-drilldown-data"
+import { claimRecords, kpiLabels, matchesPersonSearch, programmeTotals } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber } from "@/lib/format"
 import { EntityCard } from "@/components/drilldown/entity-card"
 import { EntityTable } from "@/components/drilldown/entity-table"
@@ -30,7 +30,7 @@ const accents = ["#3b82f6", "#0ea5e9", "#8b5cf6", "#22c55e", "#f59e0b", "#f97316
 const statusLabel: Record<string, string> = {
   Approved: "Approved",
   "Settlement calculated": "Settlement",
-  "Under verification": "Verification",
+  "Under Evaluation": "Evaluation",
   "Documents pending": "Pending",
   "Payment queued": "Queued",
 }
@@ -76,8 +76,8 @@ function ClaimsPage() {
     <PageShell>
       <PageHero
         eyebrow="Settlement requests"
-        title="Claims filed by victims"
-        description="Search claimants by name, PAN, Aadhaar, or customer ID. Open a claim to see companies, schemes, invested amounts, and returns taken."
+        title={kpiLabels.claims}
+        description="Search claimants by name, PAN, Aadhaar, or customer ID. Open a claim to view fraudulent entities, schemes, deposit amounts, and returns received."
         icon={FileStack}
         backTo="/"
         accent="#3b82f6"
@@ -86,15 +86,15 @@ function ClaimsPage() {
       <div className="grid gap-3 sm:grid-cols-3">
         <SparkStatCard
           id="cl-total"
-          label="Sample claims"
-          value={formatNumber(claimRecords.length)}
+          label={kpiLabels.claims}
+          value={formatNumber(programmeTotals.claims)}
           tone="blue"
           icon={FileStack}
-          spark={[4, 5, 5, 6, 7, 7, 8]}
+          spark={[131000, 142000, 138500, 149200, 146800, 154600, programmeTotals.claims]}
         />
         <SparkStatCard
           id="cl-match"
-          label="Matching now"
+          label="Matching records"
           value={formatNumber(filtered.length)}
           tone="cyan"
           icon={Search}
@@ -102,7 +102,7 @@ function ClaimsPage() {
         />
         <SparkStatCard
           id="cl-amt"
-          label="Claim value (sample)"
+          label="Total claim amount"
           value={formatINR(claimRecords.reduce((s, c) => s + c.claimAmount, 0))}
           tone="gold"
           icon={Wallet}
@@ -111,13 +111,13 @@ function ClaimsPage() {
       </div>
 
       <SectionCard
-        title="Claims list"
-        description="Tap a claim for full investment detail"
+        title="Claims register"
+        description="Open a claim for full deposit detail"
         toolbar={
           <FilterToolbar
             search={query}
             onSearchChange={setQuery}
-            searchPlaceholder="Search users…"
+            searchPlaceholder="Search claims…"
             searchLabel="Search claims"
             filters={statusFilters}
             filterValue={filter}

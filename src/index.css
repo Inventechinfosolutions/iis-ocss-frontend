@@ -7,8 +7,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Source Sans 3", "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Fraunces", "Source Serif 4", Georgia, serif;
+  --font-sans: "Noto Sans", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Noto Sans", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-display);
   --color-background: var(--background);
   --color-foreground: var(--foreground);

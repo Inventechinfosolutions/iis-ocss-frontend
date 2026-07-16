@@ -62,7 +62,7 @@ export function GlobalSearch() {
           onBlur={() => window.setTimeout(() => setOpen(false), 160)}
           placeholder={`Search by ${searchPlaceholders[placeholderIndex]}…`}
           className="h-11 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0 md:text-sm"
-          aria-label="Global search across OCSS"
+          aria-label="Global search across CSMS"
         />
         {query ? (
           <button
@@ -90,7 +90,7 @@ export function GlobalSearch() {
           <ul className="max-h-72 overflow-y-auto p-2">
             {hits.length === 0 ? (
               <li className="px-3 py-6 text-center text-sm text-muted-foreground">
-                No matching records in sample index
+                No matching records found
               </li>
             ) : (
               hits.map((hit) => {

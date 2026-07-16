@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import {
   Banknote,
-  CircleDollarSign,
+  IndianRupee,
   Landmark,
   Timer,
   XCircle,
@@ -18,12 +18,9 @@ import {
   SectionCard,
   ViewToggle,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { getBankPaymentRows } from "@/data/report-data"
+import { kpiLabels, programmeTotals } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber } from "@/lib/format"
 
 export const Route = createFileRoute("/reports/payments")({
@@ -82,10 +79,10 @@ function PaymentReportPage() {
   const metrics = [
     {
       id: "paid-amt",
-      label: "Money sent (sample)",
-      value: formatINR(stats.paidAmount, false),
-      hint: `${formatNumber(stats.paid)} successful credits`,
-      icon: CircleDollarSign,
+      label: kpiLabels.settled,
+      value: formatINR(programmeTotals.settled),
+      hint: `${formatNumber(stats.paid)} sample credits in register`,
+      icon: IndianRupee,
       color: "#16a34a",
       soft: "#dcfce7",
     },
@@ -121,16 +118,14 @@ function PaymentReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
+        eyebrow="CSMS · Detailed report"
         title="Bank payment report"
-        description="Money sent to victims with bank details and UTR references for reconciliation."
+        description="Amounts disbursed to depositors with bank details and UTR references for reconciliation."
         icon={Landmark}
         backTo="/reports"
         backLabel="Back to detailed reports"
         accent="#0ea5e9"
       />
-
-      <ReportMeta label="Bank payment report" accent="#0ea5e9" />
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((m, i) => (
@@ -147,7 +142,7 @@ function PaymentReportPage() {
           <ReportSectionIntro
             title="Payment register"
             countLabel={`${filtered.length} transfers`}
-            description="Search by name, claim ID, bank, or UTR. Open the claim for full investment context."
+            description="Search by name, claim ID, bank, or UTR. Open the claim for full deposit context."
             accent="#0369a1"
             soft="#e0f2fe"
           />
@@ -233,7 +228,6 @@ function PaymentReportPage() {
         )}
       </SectionCard>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

@@ -78,7 +78,7 @@ export function getAlertDetail(alertId: string): AlertDetail | null {
         accent,
         soft,
         actionHint:
-          "Review linked Aadhaar / PAN pairs and merge or reject duplicate filings across companies.",
+          "Review linked Aadhaar / PAN pairs and merge or reject duplicate filings across fraudulent entities.",
         cases: victimCases(8).map((row, i) => ({
           ...row,
           meta: `${row.meta} · flagged pair #${i + 1}`,
@@ -130,7 +130,7 @@ export function getAlertDetail(alertId: string): AlertDetail | null {
         accent,
         soft,
         actionHint:
-          "Notify victims to re-upload KYC / bond documents before the extra-documents window closes.",
+          "Notify depositors to re-upload KYC / bond documents before the additional-documents window closes.",
         cases: claimCases(8).map((row) => ({
           ...row,
           meta: `${row.meta} · re-upload required`,

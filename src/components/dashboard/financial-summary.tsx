@@ -3,15 +3,11 @@ import {
   ChevronRight,
   Clock3,
   HandCoins,
-  IndianRupee,
   Percent,
-  PieChart,
-  Shield,
-  Users,
   Wallet,
 } from "lucide-react"
 import { Link } from "@tanstack/react-router"
-import { financialFooterStats, financialMetrics } from "@/data/dashboard-data"
+import { financialMetrics } from "@/data/dashboard-data"
 import { formatINR, formatPercent } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
@@ -46,27 +42,6 @@ const metricIcons = {
   "equitable-ratio": Percent,
 } as const
 
-const footerIcons = {
-  pie: PieChart,
-  users: Users,
-  shield: Shield,
-} as const
-
-function MoneyHeroArt() {
-  return (
-    <div className="relative hidden h-[52px] w-[64px] shrink-0 sm:block" aria-hidden>
-      <div className="absolute bottom-1 left-0.5 h-5 w-5 rounded-full bg-gradient-to-br from-[#93c5fd] to-[#3b82f6] shadow-md ring-2 ring-white/80" />
-      <div className="absolute bottom-0 left-3.5 h-6 w-6 rounded-full bg-gradient-to-br from-[#bfdbfe] to-[#60a5fa] shadow-md ring-2 ring-white/80" />
-      <div className="absolute right-0 top-0 flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#dbeafe] to-[#93c5fd] shadow-lg ring-1 ring-[#3b82f6]/25">
-        <div className="flex size-7 items-center justify-center rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#1d4ed8] text-white shadow-inner">
-          <IndianRupee className="size-3.5" strokeWidth={2.5} />
-        </div>
-      </div>
-      <Shield className="absolute -right-0.5 top-6 size-3.5 text-[#3b82f6]/70" />
-    </div>
-  )
-}
-
 export function FinancialSummary({ className }: { className?: string }) {
   return (
     <section
@@ -74,19 +49,16 @@ export function FinancialSummary({ className }: { className?: string }) {
       className={cn("dashboard-panel stagger-in flex h-full flex-col p-3 sm:p-4", className)}
       style={{ animationDelay: "120ms" }}
     >
-      <div className="mb-2 flex items-start justify-between gap-2 sm:mb-3">
-        <div className="min-w-0">
+      <div className="mb-2 sm:mb-3">
           <h2
             id="financial-heading"
-            className="font-display text-sm font-semibold tracking-tight text-foreground sm:text-base"
+            className="font-display text-xs font-semibold tracking-tight text-foreground sm:text-sm"
           >
             Funds Available for Settlement
           </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Overview of available funds, approved claims, and settlement distribution.
+          <p className="mt-0.5 hidden text-[10px] text-muted-foreground sm:block">
+            Overview of available funds, approved claims, and settlement distribution
           </p>
-        </div>
-        <MoneyHeroArt />
       </div>
 
       <ul className="min-h-0 flex-1 space-y-0.5">
@@ -140,32 +112,6 @@ export function FinancialSummary({ className }: { className?: string }) {
           )
         })}
       </ul>
-
-      <div className="mt-auto grid grid-cols-1 gap-1.5 rounded-xl bg-slate-50 p-2 sm:grid-cols-3 sm:gap-2 sm:p-2.5 dark:bg-muted/50">
-        {financialFooterStats.map((stat) => {
-          const Icon = footerIcons[stat.icon]
-          return (
-            <div key={stat.id} className="min-w-0 text-left">
-              <div className="flex items-center gap-1.5 sm:items-start sm:gap-2">
-                <span
-                  className="flex size-6 shrink-0 items-center justify-center rounded-full sm:size-7"
-                  style={{ background: `${stat.accent}18`, color: stat.accent }}
-                >
-                  <Icon className="size-3" />
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-[9px] leading-tight text-muted-foreground sm:text-[10px]">
-                    {stat.label}
-                  </p>
-                  <p className="font-display text-xs font-semibold tabular-nums text-foreground sm:text-sm">
-                    {stat.value}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
     </section>
   )
 }

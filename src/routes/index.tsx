@@ -5,7 +5,6 @@ import { FinancialSummary } from '@/components/dashboard/financial-summary'
 import { TerritorySection } from '@/components/dashboard/territory-section'
 import { ChartsSection } from '@/components/dashboard/charts-section'
 import {
-  RequirementInsights,
   SafetyChecksChart,
 } from '@/components/dashboard/requirement-insights'
 
@@ -38,17 +37,9 @@ function ExecutiveDashboard() {
         </div>
       </div>
 
-      <RequirementInsights />
+      {/* <RequirementInsights /> */}
 
       <ChartsSection />
-
-      <footer className="flex flex-col gap-2 border-t border-border/60 pt-6 pb-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © 2026 Online Claim Settlement System (OCSS) · Competent Authority,
-          Karnataka
-        </p>
-        <p>Sample operational data for demonstration · Not for judicial filing</p>
-      </footer>
     </main>
   )
 }

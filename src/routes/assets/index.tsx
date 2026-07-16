@@ -2,11 +2,11 @@ import { useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import {
   Building2,
-  CircleDollarSign,
+  IndianRupee,
   Landmark,
   MapPin,
 } from "lucide-react"
-import { feCompanies, recoveredAssets } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels, programmeTotals, recoveredAssets } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -47,16 +47,16 @@ function AssetsPage() {
     return [...map.entries()]
   }, [])
 
-  const grandTotal = recoveredAssets.reduce((s, a) => s + a.recoveredAmount, 0)
+  const grandTotal = programmeTotals.recovered
   const [openId, setOpenId] = useState<string | null>(grouped[0]?.[0] ?? null)
 
   return (
     <PageShell>
       <PageHero
         eyebrow="Asset recovery"
-        title="Money recovered from assets"
-        description="Frozen property, bank accounts, and other assets of fraudulent entities — and how much money was recovered from each."
-        icon={CircleDollarSign}
+        title={kpiLabels.recovered}
+        description="Attached property, bank accounts, and other assets of fraudulent entities — and the amount recovered from each."
+        icon={IndianRupee}
         backTo="/"
         accent="#22c55e"
       />
@@ -65,14 +65,14 @@ function AssetsPage() {
         <SparkStatCard
           id="as-count"
           label="Assets listed"
-          value={formatNumber(recoveredAssets.length)}
+          value={formatNumber(programmeTotals.assetsListed)}
           tone="blue"
           icon={Landmark}
-          spark={[10, 12, 13, 14, 15, 17, 18]}
+          spark={[10, 12, 13, 14, 15, 17, programmeTotals.assetsListed]}
         />
         <SparkStatCard
           id="as-co"
-          label="Companies"
+          label="Fraudulent entities"
           value={formatNumber(grouped.length)}
           tone="violet"
           icon={Building2}
@@ -80,17 +80,17 @@ function AssetsPage() {
         />
         <SparkStatCard
           id="as-total"
-          label="Total recovered"
+          label={kpiLabels.recovered}
           value={formatINR(grandTotal)}
           tone="success"
-          icon={CircleDollarSign}
-          spark={[780, 860, 940, 1020, 1080, 1140, 1180]}
+          icon={IndianRupee}
+          spark={[980, 1040, 1080, 1120, 1140, 1160, 1180]}
         />
       </div>
 
       <SectionCard
         title="Assets by fraudulent entities"
-        description="Expand a company to see every asset and the amount recovered through it"
+        description="Expand a fraudulent entity to view each attached asset and the recovered amount"
       >
         <ul className="space-y-3">
           {grouped.map(([companyId, group]) => {

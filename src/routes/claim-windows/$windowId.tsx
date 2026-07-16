@@ -17,11 +17,7 @@ import {
   ViewToggle,
 } from "@/components/drilldown/page-shell"
 import { EntityCard } from "@/components/drilldown/entity-card"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { claimWindows } from "@/data/dashboard-data"
 import { claimRecords, feCompanies } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber } from "@/lib/format"
@@ -80,14 +76,12 @@ function ClaimWindowDetailPage() {
       <PageHero
         eyebrow={`Claim window · ${statusLabel[window.status]}`}
         title={window.company}
-        description={`Victims may file claims from ${window.from} to ${window.to}. ${formatNumber(window.claimsReceived)} claims received in this invitation window.`}
+        description={`Depositors may file claims from ${window.from} to ${window.to}. ${formatNumber(window.claimsReceived)} claims received in this notification window.`}
         icon={CalendarClock}
         backTo="/"
         backLabel="Back to overview"
         accent={accent}
       />
-
-      <ReportMeta label="Invitation window" accent={accent} />
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <ExecutiveMetricTile
@@ -115,7 +109,7 @@ function ClaimWindowDetailPage() {
           style={{ animationDelay: "55ms" }}
         />
         <ExecutiveMetricTile
-          label="Company victims"
+          label="Depositors affected"
           value={formatNumber(company?.victims ?? 0)}
           hint="Depositors linked to this entity"
           icon={Users}
@@ -124,9 +118,9 @@ function ClaimWindowDetailPage() {
           style={{ animationDelay: "110ms" }}
         />
         <ExecutiveMetricTile
-          label="Sample claim value"
+          label="Total claim amount"
           value={formatINR(sampleAmount, false)}
-          hint={`${formatNumber(relatedClaims.length)} sample claims`}
+          hint={`${formatNumber(relatedClaims.length)} related claims`}
           icon={Building2}
           color="#f59e0b"
           soft="#fef3c7"
@@ -154,12 +148,12 @@ function ClaimWindowDetailPage() {
                 {company.name}
               </p>
               <p className="text-sm text-muted-foreground">
-                Open full company profile — schemes, recovery, payouts
+                Open full fraudulent entity profile — schemes, recovery, disbursements
               </p>
             </div>
           </div>
           <span className="text-xs font-semibold" style={{ color: accent }}>
-            Open company →
+            Open entity →
           </span>
         </Link>
       )}
@@ -167,9 +161,9 @@ function ClaimWindowDetailPage() {
       <SectionCard className="stagger-in">
         <div className="mb-5 flex flex-col gap-4 border-b border-border/50 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <ReportSectionIntro
-            title="Sample claims in this window"
+            title="Claims in this window"
             countLabel={`${filteredClaims.length} shown`}
-            description="Drill-down sample of claims filed against this company during the invitation period."
+            description="Claims filed against this fraudulent entity during the notification period."
             accent={accent}
             soft="#e0f2fe"
           />
@@ -223,13 +217,13 @@ function ClaimWindowDetailPage() {
             ))}
             {filteredClaims.length === 0 && (
               <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground sm:col-span-2 xl:col-span-3">
-                No sample claims match this search
+                No claims match this search
               </li>
             )}
           </ul>
         ) : (
           <EntityTable
-            emptyLabel="No sample claims match this search"
+            emptyLabel="No claims match this search"
             columns={[
               { key: "status", header: "Status", align: "left" },
               { key: "amount", header: "Amount", align: "right" },
@@ -280,7 +274,6 @@ function ClaimWindowDetailPage() {
         })}
       </div>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

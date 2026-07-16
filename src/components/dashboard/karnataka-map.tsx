@@ -232,23 +232,7 @@ export function KarnatakaDistrictMap({
           <filter id={`${uid}-soft`} x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="1" stdDeviation="1.2" floodColor="#1e3a8a" floodOpacity="0.12" />
           </filter>
-          <linearGradient id={`${uid}-sea`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#bfdbfe" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#bfdbfe" stopOpacity="0.12" />
-          </linearGradient>
         </defs>
-
-        {/* Soft sea wash on the west edge */}
-        {!compact ? (
-          <ellipse
-            cx={28}
-            cy={280}
-            rx={70}
-            ry={190}
-            fill={`url(#${uid}-sea)`}
-            opacity={0.7}
-          />
-        ) : null}
 
         <g filter={`url(#${uid}-soft)`}>
           {geo.features.map((feature) => {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import {
-  CircleDollarSign,
+  IndianRupee,
   MapPin,
   Scale,
   UserRound,
@@ -19,11 +19,7 @@ import {
   SectionCard,
   ViewToggle,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { getVictimReportRows } from "@/data/report-data"
 import { formatINR, formatNumber } from "@/lib/format"
 
@@ -74,7 +70,7 @@ function VictimReportPage() {
   const metrics = [
     {
       id: "victims",
-      label: "Victims in report",
+      label: "Depositors in report",
       value: formatNumber(filtered.length),
       hint: "Registered depositor profiles",
       icon: Users,
@@ -83,9 +79,9 @@ function VictimReportPage() {
     },
     {
       id: "invested",
-      label: "Total invested",
+      label: "Total deposits",
       value: formatINR(totals.invested, false),
-      hint: "Across listed victims",
+      hint: "Across listed depositors",
       icon: Wallet,
       color: "#f59e0b",
       soft: "#fef3c7",
@@ -94,8 +90,8 @@ function VictimReportPage() {
       id: "returns",
       label: "Returns taken",
       value: formatINR(totals.returns, false),
-      hint: "Already received from companies",
-      icon: CircleDollarSign,
+      hint: "Already received from fraudulent entities",
+      icon: IndianRupee,
       color: "#16a34a",
       soft: "#dcfce7",
     },
@@ -103,7 +99,7 @@ function VictimReportPage() {
       id: "owed",
       label: "Still outstanding",
       value: formatINR(totals.outstanding, false),
-      hint: "Invested minus returns",
+      hint: "Deposited minus returns received",
       icon: Scale,
       color: "#f43f5e",
       soft: "#ffe4e6",
@@ -113,16 +109,14 @@ function VictimReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
-        title="Report by victim"
-        description="Person-wise claim exposure — investments, returns already taken, and what is still outstanding."
+        eyebrow="CSMS · Detailed report"
+        title="Report by depositor"
+        description="Depositor-wise claim exposure — deposits, returns already received, and outstanding settlement liability."
         icon={UserRound}
         backTo="/reports"
         backLabel="Back to detailed reports"
         accent="#6366f1"
       />
-
-      <ReportMeta label="Victim report" accent="#6366f1" />
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((m, i) => (
@@ -137,9 +131,9 @@ function VictimReportPage() {
       <SectionCard className="stagger-in">
         <div className="mb-5 flex flex-col gap-4 border-b border-border/50 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <ReportSectionIntro
-            title="Victim-wise details"
-            countLabel={`${filtered.length} people`}
-            description="Open a victim to see schemes, companies, and identity used for claim matching."
+            title="Depositor-wise details"
+            countLabel={`${filtered.length} depositors`}
+            description="Open a depositor to see schemes, fraudulent entities, and identity used for claim matching."
             accent="#4338ca"
             soft="#eef2ff"
           />
@@ -147,7 +141,7 @@ function VictimReportPage() {
             search={query}
             onSearchChange={setQuery}
             searchPlaceholder="Search name, PAN, customer ID…"
-            searchLabel="Search victims"
+            searchLabel="Search depositors"
             filters={filters}
             filterValue={filter}
             onFilterChange={setFilter}
@@ -178,25 +172,25 @@ function VictimReportPage() {
                       label: "outstanding",
                       emphasize: true,
                     },
-                    { value: formatINR(r.invested, false), label: "invested" },
+                    { value: formatINR(r.invested, false), label: "deposited" },
                     { value: formatINR(r.returnsTaken, false), label: "returns" },
-                    { value: r.primaryCompany, label: "company" },
+                    { value: r.primaryCompany, label: "entity" },
                   ]}
                 />
               </li>
             ))}
             {filtered.length === 0 && (
               <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground sm:col-span-2 xl:col-span-3">
-                No victims match this search
+                No depositors match this search
               </li>
             )}
           </ul>
         ) : (
           <EntityTable
-            emptyLabel="No victims match this search"
+            emptyLabel="No depositors match this search"
             columns={[
               { key: "district", header: "District", align: "left" },
-              { key: "invested", header: "Invested", align: "right" },
+              { key: "deposited", header: "Deposited", align: "right" },
               { key: "returns", header: "Returns", align: "right" },
               { key: "owed", header: "Outstanding", align: "right" },
               { key: "schemes", header: "Schemes", align: "right" },
@@ -211,7 +205,7 @@ function VictimReportPage() {
               subtitle: `${r.customerId} · ${r.primaryCompany}`,
               cells: {
                 district: { value: r.district },
-                invested: { value: formatINR(r.invested, false) },
+                deposited: { value: formatINR(r.invested, false) },
                 returns: { value: formatINR(r.returnsTaken, false) },
                 owed: {
                   value: formatINR(r.outstanding, false),
@@ -224,7 +218,6 @@ function VictimReportPage() {
         )}
       </SectionCard>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

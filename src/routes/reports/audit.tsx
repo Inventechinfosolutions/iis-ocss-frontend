@@ -14,11 +14,7 @@ import {
   PageShell,
   SectionCard,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { auditEventRows } from "@/data/report-data"
 import { formatNumber } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -113,7 +109,7 @@ function AuditReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
+        eyebrow="CSMS · Detailed report"
         title="Court & audit report"
         description="Case references and full activity history across court, audit, authority, and system events."
         icon={Scale}
@@ -121,8 +117,6 @@ function AuditReportPage() {
         backLabel="Back to detailed reports"
         accent="#f43f5e"
       />
-
-      <ReportMeta label="Court & audit report" accent="#f43f5e" />
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((m, i) => (
@@ -229,7 +223,6 @@ function AuditReportPage() {
         </ol>
       </SectionCard>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

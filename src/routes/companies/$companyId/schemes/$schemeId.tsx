@@ -108,15 +108,15 @@ function SchemeDetailPage() {
   const { company, scheme } = match
   const sharePct =
     company.totalAmount > 0 ? (scheme.amount / company.totalAmount) * 100 : 0
-  const sampleInvested = depositors.reduce((s, d) => s + d.invested, 0)
-  const sampleReturns = depositors.reduce((s, d) => s + d.returnsTaken, 0)
+  const totalDeposited = depositors.reduce((s, d) => s + d.invested, 0)
+  const totalReturns = depositors.reduce((s, d) => s + d.returnsTaken, 0)
 
   const metrics = [
     {
       id: "depositors",
       label: "Depositors affected",
       value: formatNumber(scheme.investors),
-      hint: "People who put money in this plan",
+      hint: "Depositors registered under this scheme",
       icon: Users,
       color: "#0ea5e9",
       soft: "#e0f2fe",
@@ -132,9 +132,9 @@ function SchemeDetailPage() {
     },
     {
       id: "returns",
-      label: "Returns taken (sample)",
-      value: formatINR(sampleReturns),
-      hint: `${formatINR(sampleInvested)} invested in sample records`,
+      label: "Returns received",
+      value: formatINR(totalReturns),
+      hint: `${formatINR(totalDeposited)} deposited under listed records`,
       icon: Gem,
       color: "#16a34a",
       soft: "#dcfce7",
@@ -146,7 +146,7 @@ function SchemeDetailPage() {
       <PageHero
         eyebrow={`${company.name} · Scheme`}
         title={scheme.name}
-        description="Depositors affected by this plan — search by name, PAN, Aadhaar, or district, then open a person for full investment detail."
+        description="Depositors affected by this scheme — search by name, PAN, Aadhaar, or district, then open a record for full deposit detail."
         icon={Gem}
         backTo="/companies/$companyId"
         backParams={{ companyId: company.id }}
@@ -181,8 +181,8 @@ function SchemeDetailPage() {
               </span>
             </div>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Sample depositor records for {scheme.name}. Totals above reflect
-              the full plan; this list is the drill-down sample set.
+              Depositor records for {scheme.name}. Totals above reflect
+              the full scheme; this list shows depositors in the current view.
             </p>
           </div>
           <FilterToolbar
@@ -217,7 +217,7 @@ function SchemeDetailPage() {
                   metrics={[
                     {
                       value: formatINR(d.invested, false),
-                      label: "invested",
+                      label: "deposited",
                       emphasize: true,
                     },
                     {
@@ -241,7 +241,7 @@ function SchemeDetailPage() {
             emptyLabel="No depositors match this search"
             columns={[
               { key: "district", header: "District", align: "left" },
-              { key: "invested", header: "Invested", align: "right" },
+              { key: "deposited", header: "Deposited", align: "right" },
               { key: "returns", header: "Returns", align: "right" },
               { key: "customer", header: "Customer ID", align: "right" },
             ]}
@@ -256,7 +256,7 @@ function SchemeDetailPage() {
               badge: d.district,
               cells: {
                 district: { value: d.district },
-                invested: {
+                deposited: {
                   value: formatINR(d.invested, false),
                   emphasize: true,
                 },
@@ -281,7 +281,7 @@ function SchemeDetailPage() {
             )}
           >
             <MapPin className="size-3.5" />
-            Open a depositor to see full identity and all investments.
+            Open a depositor to see full identity and all deposit records.
           </p>
         )}
       </SectionCard>

@@ -20,15 +20,15 @@ function ClaimDetailPage() {
   const claim = claimRecords.find((c) => c.id === claimId)
   if (!claim) throw notFound()
 
-  const invested = claim.investments.reduce((s, i) => s + i.invested, 0)
+  const deposited = claim.investments.reduce((s, i) => s + i.invested, 0)
   const returns = claim.investments.reduce((s, i) => s + i.returnsTaken, 0)
 
   return (
     <PageShell>
       <PageHero
-        eyebrow="Claim detail"
-        title={claim.name}
-        description={`${claim.claimId} — companies, schemes, money invested, and returns already taken.`}
+        eyebrow="Settlement"
+        title="Claim detail"
+        description={`${claim.claimId} — schemes, deposit amounts, and returns already received.`}
         icon={FileStack}
         backTo="/claims"
         backLabel="All claims"
@@ -61,16 +61,16 @@ function ClaimDetailPage() {
           spark={[40, 50, 58, 66, 75, 88, 100]}
         />
         <SparkStatCard
-          id={`${claim.id}-inv`}
-          label="Total invested"
-          value={formatINR(invested, false)}
+          id={`${claim.id}-dep`}
+          label="Total deposits"
+          value={formatINR(deposited, false)}
           tone="gold"
           icon={Wallet}
           spark={[35, 45, 55, 62, 72, 85, 100]}
         />
         <SparkStatCard
           id={`${claim.id}-ret`}
-          label="Returns taken"
+          label="Returns received"
           value={formatINR(returns, false)}
           tone="success"
           icon={Wallet}
@@ -79,8 +79,8 @@ function ClaimDetailPage() {
       </div>
 
       <SectionCard
-        title="Investments behind this claim"
-        description="Company, scheme, money put in, and returns already received"
+        title="Deposits behind this claim"
+        description="Fraudulent entity, scheme, deposit amount, and returns already received"
       >
         <InvestmentList investments={claim.investments} />
       </SectionCard>

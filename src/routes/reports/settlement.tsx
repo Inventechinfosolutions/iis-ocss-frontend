@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import {
   Building2,
-  CircleDollarSign,
+  IndianRupee,
   Percent,
   Scale,
   Wallet,
@@ -18,13 +18,9 @@ import {
   ViewToggle,
 } from "@/components/drilldown/page-shell"
 import { EntityCard } from "@/components/drilldown/entity-card"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import { financialMetrics } from "@/data/dashboard-data"
-import { feCompanies } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 
 export const Route = createFileRoute("/reports/settlement")({
@@ -69,11 +65,40 @@ function SettlementReportPage() {
   const cashReady = financialMetrics.find((m) => m.id === "available-fund")
   const equitable = financialMetrics.find((m) => m.id === "equitable-ratio")
   const netPayable = financialMetrics.find((m) => m.id === "net-payable")
+  const approved = financialMetrics.find((m) => m.id === "approved-liability")
+  const previousReturns = financialMetrics.find((m) => m.id === "previous-returns")
 
   const metrics = [
     {
+      id: "approved",
+      label: approved?.label ?? "Total Approved Settlement Amount",
+      value: formatINR(approved?.value ?? 0),
+      hint: "Across all fraudulent entities",
+      icon: Wallet,
+      color: "#3b82f6",
+      soft: "#dbeafe",
+    },
+    {
+      id: "returns",
+      label: previousReturns?.label ?? "Amount Already Received by Depositors",
+      value: formatINR(previousReturns?.value ?? 0),
+      hint: "Pre-settlement payouts by fraudulent entities",
+      icon: IndianRupee,
+      color: "#16a34a",
+      soft: "#dcfce7",
+    },
+    {
+      id: "left",
+      label: netPayable?.label ?? "Outstanding Settlement Liability",
+      value: formatINR(netPayable?.value ?? pool.remaining),
+      hint: "Approved liability yet to be funded",
+      icon: Scale,
+      color: "#f43f5e",
+      soft: "#ffe4e6",
+    },
+    {
       id: "cash",
-      label: cashReady?.label ?? "Cash ready",
+      label: cashReady?.label ?? "Funds Available for Immediate Settlement",
       value: formatINR(cashReady?.value ?? 0),
       hint: "Available for disbursement now",
       icon: Wallet,
@@ -82,30 +107,21 @@ function SettlementReportPage() {
     },
     {
       id: "ratio",
-      label: "Fair share ratio",
+      label: equitable?.label ?? "Settlement Distribution Percentage",
       value: formatPercent(equitable?.value ?? 34.5),
       hint: "Current equitable distribution %",
       icon: Percent,
-      color: "#3b82f6",
-      soft: "#dbeafe",
+      color: "#0ea5e9",
+      soft: "#e0f2fe",
     },
     {
-      id: "paid",
-      label: "Already paid out",
-      value: formatINR(pool.settled),
-      hint: `${formatINR(pool.recovered)} recovered into the pool`,
-      icon: CircleDollarSign,
+      id: "gross",
+      label: kpiLabels.liability,
+      value: formatINR(pool.liability),
+      hint: "Gross exposure across all entities",
+      icon: Scale,
       color: "#f59e0b",
       soft: "#fef3c7",
-    },
-    {
-      id: "left",
-      label: "Still left to arrange",
-      value: formatINR(netPayable?.value ?? pool.remaining),
-      hint: "Approved liability yet to be funded",
-      icon: Scale,
-      color: "#f43f5e",
-      soft: "#ffe4e6",
     },
   ] as const
 
@@ -114,18 +130,16 @@ function SettlementReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
-        title="Settlement money report"
-        description="How recovered funds are shared across fraudulent entities and what is still left to pay victims."
+        eyebrow="CSMS · Detailed report"
+        title="Settlement report"
+        description="How recovered funds are allocated across fraudulent entities and outstanding settlement liability to depositors."
         icon={Wallet}
         backTo="/reports"
         backLabel="Back to detailed reports"
         accent="#f59e0b"
       />
 
-      <ReportMeta label="Settlement report" accent="#f59e0b" />
-
-      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {metrics.map((m, i) => (
           <ExecutiveMetricTile
             key={m.id}
@@ -138,14 +152,14 @@ function SettlementReportPage() {
       <SectionCard className="stagger-in">
         <div className="mb-5 border-b border-border/50 pb-4">
           <ReportSectionIntro
-            title="Liability vs payout by company"
+            title="Liability vs disbursement by fraudulent entity"
             countLabel={`${filtered.length} entities`}
-            description="Outstanding liability compared with money already paid to victims."
+            description="Outstanding liability compared with amounts already disbursed to depositors."
             accent="#b45309"
             soft="#fef3c7"
           />
         </div>
-        <ul className="space-y-3">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((c, i) => {
             const paidPct =
               c.liability > 0 ? (c.settled / c.liability) * 100 : 0
@@ -158,29 +172,27 @@ function SettlementReportPage() {
                 <Link
                   to="/companies/$companyId"
                   params={{ companyId: c.id }}
-                  className="group block rounded-md border border-black/[0.05] bg-white p-3.5 transition-all hover:border-amber-300/60 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] dark:border-white/[0.08] dark:bg-[#141c2c]"
+                  className="group flex h-full flex-col rounded-md border border-black/[0.05] bg-white p-3.5 transition-all hover:border-amber-300/60 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)] dark:border-white/[0.08] dark:bg-[#141c2c]"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex min-w-0 items-center gap-2.5">
-                      <span
-                        className="size-2.5 shrink-0 rounded-full"
-                        style={{ background: c.accent }}
-                      />
-                      <p className="truncate font-display text-sm font-semibold text-foreground">
-                        {c.name}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-3 text-xs tabular-nums">
-                      <span className="text-muted-foreground">
-                        Liability{" "}
-                        <span className="font-semibold text-foreground">
-                          {formatINR(c.liability)}
-                        </span>
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span
+                      className="size-2.5 shrink-0 rounded-full"
+                      style={{ background: c.accent }}
+                    />
+                    <p className="truncate font-display text-sm font-semibold text-foreground">
+                      {c.name}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1 text-xs tabular-nums">
+                    <span className="text-muted-foreground">
+                      Liability{" "}
+                      <span className="font-semibold text-foreground">
+                        {formatINR(c.liability)}
                       </span>
-                      <span className="font-semibold text-amber-700 dark:text-amber-400">
-                        {formatPercent(paidPct)} paid
-                      </span>
-                    </div>
+                    </span>
+                    <span className="font-semibold text-amber-700 dark:text-amber-400">
+                      {formatPercent(paidPct)} paid
+                    </span>
                   </div>
                   <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-muted/70 dark:bg-white/[0.06]">
                     <div
@@ -201,7 +213,7 @@ function SettlementReportPage() {
       <SectionCard className="stagger-in">
         <div className="mb-5 flex flex-col gap-4 border-b border-border/50 pb-4 lg:flex-row lg:items-end lg:justify-between">
           <ReportSectionIntro
-            title="Company settlement ledger"
+            title="Fraudulent entity settlement ledger"
             countLabel={`${filtered.length} listed`}
             description="Recovered assets, paid amounts, and remaining liability."
             accent="#b45309"
@@ -210,8 +222,8 @@ function SettlementReportPage() {
           <FilterToolbar
             search={query}
             onSearchChange={setQuery}
-            searchPlaceholder="Search companies…"
-            searchLabel="Search companies"
+            searchPlaceholder="Search fraudulent entities…"
+            searchLabel="Search fraudulent entities"
             filters={companyFilters}
             filterValue={filter}
             onFilterChange={setFilter}
@@ -235,7 +247,7 @@ function SettlementReportPage() {
                   accent={c.accent}
                   icon={Building2}
                   title={c.name}
-                  badge={`${formatNumber(c.victims)} victims`}
+                  badge={`${formatNumber(c.victims)} depositors`}
                   metrics={[
                     {
                       value: formatINR(c.settled),
@@ -283,7 +295,6 @@ function SettlementReportPage() {
         )}
       </SectionCard>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

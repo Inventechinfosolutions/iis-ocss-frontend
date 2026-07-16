@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import {
   Building2,
-  CircleDollarSign,
+  IndianRupee,
   FileBarChart2,
   Scale,
   Users,
@@ -18,7 +18,6 @@ import {
   ViewToggle,
 } from "@/components/drilldown/page-shell"
 import { EntityCard } from "@/components/drilldown/entity-card"
-import { dashboardMeta } from "@/data/dashboard-data"
 import { feCompanies } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -69,7 +68,7 @@ function ScamCompanyReportPage() {
   const metrics = [
     {
       id: "entities",
-      label: "Scam fraudulent entities",
+      label: "Fraudulent entities",
       value: formatNumber(feCompanies.length),
       hint: "Entities in this report",
       icon: Building2,
@@ -87,16 +86,16 @@ function ScamCompanyReportPage() {
     },
     {
       id: "recovered",
-      label: "Money recovered",
+      label: "Recovered amount",
       value: formatINR(totals.recovered),
       hint: `${formatPercent((totals.recovered / totals.deposited) * 100)} of deposits`,
-      icon: CircleDollarSign,
+      icon: IndianRupee,
       color: "#16a34a",
       soft: "#dcfce7",
     },
     {
       id: "paid",
-      label: "Paid to victims",
+      label: "Amount disbursed to depositors",
       value: formatINR(totals.settled),
       hint: `${formatINR(totals.liability)} still outstanding`,
       icon: Scale,
@@ -108,25 +107,14 @@ function ScamCompanyReportPage() {
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
-        eyebrow="OCSS · Detailed report"
+        eyebrow="CSMS · Detailed report"
         title="Report by fraudulent entities"
-        description="Claims, recovered money, and payouts for each fraudulent entity under the Karnataka settlement programme."
+        description="Claims, recovered amounts, and disbursements for each fraudulent entity under the Karnataka settlement programme."
         icon={FileBarChart2}
         backTo="/reports"
         backLabel="Back to detailed reports"
         accent="#0ea5e9"
       />
-
-      <div className="stagger-in flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-        <span className="inline-flex items-center rounded-md bg-[#e0f2fe] px-2 py-1 font-semibold text-[#0369a1] dark:bg-sky-500/15 dark:text-sky-300">
-          Programme report
-        </span>
-        <span>Generated {dashboardMeta.lastUpdated}</span>
-        <span className="text-border">·</span>
-        <span>{dashboardMeta.authority}</span>
-        <span className="text-border">·</span>
-        <span>Sample operational data</span>
-      </div>
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((m, i) => (
@@ -147,7 +135,7 @@ function ScamCompanyReportPage() {
         <div className="mb-5 border-b border-border/50 pb-4">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-              Exposure by company
+              Exposure by fraudulent entity
             </h2>
             <span className="inline-flex items-center rounded-md bg-[#e0f2fe] px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#0369a1] uppercase dark:bg-sky-500/15 dark:text-sky-300">
               {filtered.length} entities
@@ -217,26 +205,26 @@ function ScamCompanyReportPage() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-                Company-wise breakdown
+                Fraudulent entity-wise breakdown
               </h2>
               <span className="inline-flex items-center rounded-md bg-[#eff6ff] px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#1d4ed8] uppercase dark:bg-[#1e3a5f]/50 dark:text-sky-300">
                 {filtered.length} listed
               </span>
             </div>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Claims, deposits, recovery, and payouts — open a company for
+              Claims, deposits, recovery, and disbursements — open a fraudulent entity for
               schemes and depositors.
             </p>
           </div>
           <FilterToolbar
             search={query}
             onSearchChange={setQuery}
-            searchPlaceholder="Search companies…"
-            searchLabel="Search companies"
+            searchPlaceholder="Search fraudulent entities…"
+            searchLabel="Search fraudulent entities"
             filters={companyFilters}
             filterValue={filter}
             onFilterChange={setFilter}
-            filterLabel="Filter companies"
+            filterLabel="Filter fraudulent entities"
             trailing={<ViewToggle view={view} onChange={setView} />}
           />
         </div>
@@ -276,13 +264,13 @@ function ScamCompanyReportPage() {
             })}
             {filtered.length === 0 && (
               <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground sm:col-span-2 xl:col-span-3">
-                No companies match this search
+                No fraudulent entities match this search
               </li>
             )}
           </ul>
         ) : (
           <EntityTable
-            emptyLabel="No companies match this search"
+            emptyLabel="No fraudulent entities match this search"
             columns={[
               { key: "claims", header: "Claims", align: "right" },
               { key: "deposited", header: "Deposited", align: "right" },
@@ -322,9 +310,8 @@ function ScamCompanyReportPage() {
           "rounded-md border border-dashed border-border/70 bg-muted/20 px-4 py-3 text-xs leading-relaxed text-muted-foreground",
         )}
       >
-        This report summarises claims, asset recovery, and victim payouts by
-        fraudulent entities for OCSS demonstration. Figures are sample operational
-        data and not for judicial filing.
+        This report summarises claims, asset recovery, and depositor disbursements by
+        fraudulent entities under the Karnataka KPID settlement programme.
       </p>
     </PageShell>
   )

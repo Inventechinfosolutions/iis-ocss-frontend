@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Building2, Landmark } from "lucide-react"
-import { feCompanies } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 import {
   CompaniesExecutivePanel,
@@ -74,8 +74,8 @@ function CompaniesPage() {
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
         eyebrow="Settlement · Karnataka"
-        title="Fraudulent entities"
-        description="Fraudulent entities in the settlement programme — victims, deposits, and recovery."
+        title={kpiLabels.fes}
+        description="Fraudulent entities under the settlement programme — depositors, deposits, and asset recovery."
         icon={Landmark}
         backTo="/"
         accent="#3b82f6"
@@ -98,12 +98,12 @@ function CompaniesPage() {
           <FilterToolbar
             search={query}
             onSearchChange={setQuery}
-            searchPlaceholder="Search companies…"
-            searchLabel="Search companies"
+            searchPlaceholder="Search fraudulent entities…"
+            searchLabel="Search fraudulent entities"
             filters={companyFilters}
             filterValue={filter}
             onFilterChange={setFilter}
-            filterLabel="Filter companies"
+            filterLabel="Filter fraudulent entities"
             trailing={<ViewToggle view={view} onChange={setView} />}
           />
         </div>
@@ -133,7 +133,7 @@ function CompaniesPage() {
                         label: "recovered",
                         emphasize: true,
                       },
-                      { value: formatNumber(c.victims), label: "victims" },
+                      { value: formatNumber(c.victims), label: "depositors" },
                       { value: formatINR(c.totalAmount), label: "deposited" },
                       {
                         value: formatPercent(recoveryPct),
@@ -146,16 +146,16 @@ function CompaniesPage() {
             })}
             {filtered.length === 0 && (
               <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground sm:col-span-2 xl:col-span-3">
-                No companies match this search
+                No fraudulent entities match this search
               </li>
             )}
           </ul>
         ) : (
           <EntityTable
-            emptyLabel="No companies match this search"
+            emptyLabel="No fraudulent entities match this search"
             columns={[
               { key: "schemes", header: "Schemes", align: "right" },
-              { key: "victims", header: "Victims", align: "right" },
+              { key: "victims", header: "Depositors", align: "right" },
               { key: "deposited", header: "Deposited", align: "right" },
               { key: "recovered", header: "Recovered", align: "right" },
               { key: "rate", header: "Rate", align: "right" },

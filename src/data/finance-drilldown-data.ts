@@ -3,7 +3,7 @@ import {
   financialMetrics,
   type FinancialMetric,
 } from "@/data/dashboard-data"
-import { feCompanies } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber, formatPercent } from "@/lib/format"
 
 export const financeMetricIds = [
@@ -103,35 +103,35 @@ export function getFinanceMetricDetail(
             secondary: formatPercent(share),
             secondaryLabel: "of ready cash",
             tertiary: formatNumber(c.victims),
-            tertiaryLabel: "victims",
+            tertiaryLabel: "depositors",
             barPercent: share,
           }
         })
 
       return {
         metric,
-        eyebrow: "Money available · Cash pool",
+        eyebrow: "Settlement funds · Available balance",
         description:
-          "Cash that can be disbursed to eligible victims right now, allocated from recovered assets by fraudulent entities.",
+          "Funds that can be disbursed to eligible depositors, allocated from recovered assets by fraudulent entities.",
         accent,
         soft,
         highlights: [
           {
-            label: "Cash ready now",
+            label: metric.label,
             value: formatINR(metric.value),
             hint: `${metric.barPercent}% of total cash pool`,
             color: accent,
             soft,
           },
           {
-            label: "Total cash available",
+            label: "Total funds available",
             value: totalCash,
-            hint: "All accounts under OCSS custody",
+            hint: "All accounts under CSMS custody",
             color: "#3b82f6",
             soft: "#dbeafe",
           },
           {
-            label: "Eligible victims",
+            label: "Eligible depositors",
             value: eligible,
             hint: "Can receive a share today",
             color: "#0ea5e9",
@@ -145,7 +145,7 @@ export function getFinanceMetricDetail(
             soft: "#dcfce7",
           },
         ],
-        sectionTitle: "Cash ready by fraudulent entities",
+        sectionTitle: "Fraudulent entity-wise available funds",
         sectionHint:
           "Share of liquid cash attributed from each entity’s recovered assets.",
         rows,
@@ -177,42 +177,42 @@ export function getFinanceMetricDetail(
 
       return {
         metric,
-        eyebrow: "Money available · Approved liability",
+        eyebrow: "Settlement funds · Approved liability",
         description:
-          "Amounts approved for payment to victims after verification — before final bank credit.",
+          "Amounts approved for payment to depositors after verification — before final bank credit.",
         accent,
         soft,
         highlights: [
           {
-            label: "Approved for payment",
+            label: metric.label,
             value: formatINR(metric.value),
             hint: "Across all fraudulent entities",
             color: accent,
             soft,
           },
           {
-            label: "Already paid out",
+            label: kpiLabels.settled,
             value: formatINR(settledSum),
             hint: "Credits completed to date",
             color: "#16a34a",
             soft: "#dcfce7",
           },
           {
-            label: "Still outstanding liability",
+            label: kpiLabels.liability,
             value: formatINR(liabilitySum),
             hint: "Gross exposure still on books",
             color: "#f43f5e",
             soft: "#ffe4e6",
           },
           {
-            label: "Eligible victims",
+            label: "Eligible depositors",
             value: eligible,
             hint: "In the approval universe",
             color: "#0ea5e9",
             soft: "#e0f2fe",
           },
         ],
-        sectionTitle: "Approved amount by company",
+        sectionTitle: "Approved amount by fraudulent entity",
         sectionHint:
           "How the approved payment pool maps to each fraudulent entity.",
         rows,
@@ -231,12 +231,12 @@ export function getFinanceMetricDetail(
             id: c.id,
             companyId: c.id,
             title: c.name,
-            subtitle: "Returns victims already took from the company",
+            subtitle: "Returns depositors already received from the entity",
             accent: c.accent,
             primary: formatINR(earlier),
             primaryLabel: "earlier returns",
             secondary: formatINR(c.settled),
-            secondaryLabel: "OCSS paid later",
+            secondaryLabel: "CSMS paid later",
             tertiary: formatPercent(share),
             tertiaryLabel: "of earlier total",
             barPercent: share,
@@ -245,35 +245,37 @@ export function getFinanceMetricDetail(
 
       return {
         metric,
-        eyebrow: "Money available · Earlier returns",
+        eyebrow: "Settlement funds · Earlier returns",
         description:
-          "Money fraudulent entities already paid to victims before OCSS settlement — deducted when calculating fair share.",
+          "Amounts fraudulent entities paid to depositors before CSMS settlement — deducted when calculating equitable share.",
         accent,
         soft,
         highlights: [
           {
-            label: "Earlier returns total",
+            label: metric.label,
             value: formatINR(metric.value),
-            hint: "Pre-settlement payouts by companies",
+            hint: "Pre-settlement payouts by fraudulent entities",
             color: accent,
             soft,
           },
           {
-            label: "OCSS payouts since",
+            label: kpiLabels.settled,
             value: formatINR(settledSum),
             hint: "Paid through the settlement programme",
             color: "#3b82f6",
             soft: "#dbeafe",
           },
           {
-            label: "Recovered assets",
+            label: kpiLabels.recovered,
             value: formatINR(recoveredSum),
             hint: "Feeds current cash pool",
             color: "#16a34a",
             soft: "#dcfce7",
           },
           {
-            label: "Fair share today",
+            label:
+              financialMetrics.find((m) => m.id === "equitable-ratio")?.label ??
+              "Settlement Distribution Percentage",
             value: formatPercent(
               financialMetrics.find((m) => m.id === "equitable-ratio")?.value ??
                 34.5,
@@ -283,9 +285,9 @@ export function getFinanceMetricDetail(
             soft: "#e0f2fe",
           },
         ],
-        sectionTitle: "Earlier returns by company",
+        sectionTitle: "Earlier returns by fraudulent entity",
         sectionHint:
-          "Estimated pre-OCSS returns attributed to each fraudulent entity.",
+          "Estimated pre-CSMS returns attributed to each fraudulent entity.",
         rows,
       }
     }
@@ -316,21 +318,23 @@ export function getFinanceMetricDetail(
 
       return {
         metric,
-        eyebrow: "Money available · Funding gap",
+        eyebrow: "Settlement funds · Funding gap",
         description:
-          "How much more money still needs to be arranged so approved victims can be paid in full under the current plan.",
+          "Additional funds required so approved depositors can be paid in full under the current settlement plan.",
         accent,
         soft,
         highlights: [
           {
-            label: "Still need to arrange",
+            label: metric.label,
             value: formatINR(metric.value),
             hint: "Funding gap for approved payouts",
             color: accent,
             soft,
           },
           {
-            label: "Cash ready now",
+            label:
+              financialMetrics.find((m) => m.id === "available-fund")?.label ??
+              "Funds Available for Immediate Settlement",
             value: formatINR(
               financialMetrics.find((m) => m.id === "available-fund")?.value ??
                 0,
@@ -340,7 +344,9 @@ export function getFinanceMetricDetail(
             soft: "#dcfce7",
           },
           {
-            label: "Approved liability",
+            label:
+              financialMetrics.find((m) => m.id === "approved-liability")
+                ?.label ?? "Total Approved Settlement Amount",
             value: formatINR(
               financialMetrics.find((m) => m.id === "approved-liability")
                 ?.value ?? 0,
@@ -357,7 +363,7 @@ export function getFinanceMetricDetail(
             soft: "#e0f2fe",
           },
         ],
-        sectionTitle: "Funding gap by company",
+        sectionTitle: "Funding gap by fraudulent entity",
         sectionHint:
           "Where additional funds are still required across  fraudulent entities.",
         rows,
@@ -390,21 +396,23 @@ export function getFinanceMetricDetail(
 
       return {
         metric,
-        eyebrow: "Money available · Fair share",
+        eyebrow: "Settlement funds · Equitable share",
         description:
-          "Current equitable distribution percentage — what share of deposits victims receive from the recovery pool today.",
+          "Current equitable distribution percentage — share of deposits depositors receive from the recovery pool.",
         accent,
         soft,
         highlights: [
           {
-            label: "Fair share ratio",
+            label: metric.label,
             value: formatPercent(ratio),
             hint: "Applied programme-wide today",
             color: accent,
             soft,
           },
           {
-            label: "Cash ready now",
+            label:
+              financialMetrics.find((m) => m.id === "available-fund")?.label ??
+              "Funds Available for Immediate Settlement",
             value: formatINR(
               financialMetrics.find((m) => m.id === "available-fund")?.value ??
                 0,
@@ -414,23 +422,23 @@ export function getFinanceMetricDetail(
             soft: "#dcfce7",
           },
           {
-            label: "Eligible victims",
+            label: "Eligible depositors",
             value: eligible,
             hint: "Receive this fair share",
             color: "#3b82f6",
             soft: "#dbeafe",
           },
           {
-            label: "Gross deposits",
+            label: kpiLabels.investments,
             value: formatINR(weightSum),
             hint: "Base for fair-share calculation",
             color: "#f59e0b",
             soft: "#fef3c7",
           },
         ],
-        sectionTitle: "Fair share applied by company",
+        sectionTitle: "Equitable share by fraudulent entity",
         sectionHint:
-          "Illustrative entitled pool at today’s ratio versus what OCSS has already paid.",
+          "Entitled settlement pool at the current ratio versus amounts already disbursed through CSMS.",
         rows,
       }
     }

@@ -17,11 +17,7 @@ import {
   PageShell,
   SectionCard,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import {
   getAlertDetail,
   type AlertCaseRow,
@@ -107,8 +103,6 @@ function AlertDetailPage() {
         accent={detail.accent}
       />
 
-      <ReportMeta label="Needs attention" accent={detail.accent} />
-
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <ExecutiveMetricTile
           label="Items flagged"
@@ -129,7 +123,7 @@ function AlertDetailPage() {
           style={{ animationDelay: "55ms" }}
         />
         <ExecutiveMetricTile
-          label="Sample cases"
+          label="Related cases"
           value={formatNumber(detail.cases.length)}
           hint="Shown in this drill-down"
           icon={Users}
@@ -266,7 +260,6 @@ function AlertDetailPage() {
         })}
       </div>
 
-      <ReportDisclaimer />
     </PageShell>
   )
 }

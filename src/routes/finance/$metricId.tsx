@@ -15,17 +15,12 @@ import {
   PageShell,
   SectionCard,
 } from "@/components/drilldown/page-shell"
-import {
-  ReportDisclaimer,
-  ReportMeta,
-  ReportSectionIntro,
-} from "@/components/drilldown/report-shell"
+import { ReportSectionIntro } from "@/components/drilldown/report-shell"
 import {
   financeMetricIds,
   getFinanceMetricDetail,
   type FinanceMetricId,
 } from "@/data/finance-drilldown-data"
-import { formatINR } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/finance/$metricId")({
@@ -73,11 +68,6 @@ function FinanceMetricDetailPage() {
     })
   }, [detail.rows, filter, query])
 
-  const displayValue =
-    detail.metric.format === "percent"
-      ? `${detail.metric.value}%`
-      : formatINR(detail.metric.value)
-
   return (
     <PageShell className="space-y-5 sm:space-y-6">
       <PageHero
@@ -89,34 +79,6 @@ function FinanceMetricDetailPage() {
         backLabel="Back to overview"
         accent={detail.accent}
       />
-
-      <ReportMeta label="Money available detail" accent={detail.accent} />
-
-      <div
-        className="stagger-in relative overflow-hidden rounded-md border border-black/[0.05] p-4 sm:p-5 dark:border-white/[0.08]"
-        style={{
-          background: `linear-gradient(135deg, ${detail.soft} 0%, transparent 62%)`,
-        }}
-      >
-        <p className="text-[10px] font-bold tracking-[0.14em] text-muted-foreground uppercase">
-          Headline figure
-        </p>
-        <p
-          className="mt-1.5 font-display text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl"
-          style={{ color: detail.accent }}
-        >
-          {displayValue}
-        </p>
-        <div className="mt-3 h-2 max-w-md overflow-hidden rounded-full bg-white/70 dark:bg-white/10">
-          <div
-            className="h-full rounded-full"
-            style={{
-              width: `${Math.max(detail.metric.barPercent, 8)}%`,
-              background: detail.accent,
-            }}
-          />
-        </div>
-      </div>
 
       <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {detail.highlights.map((h, i) => (
@@ -134,55 +96,78 @@ function FinanceMetricDetailPage() {
       </ul>
 
       <SectionCard className="stagger-in">
-        <div className="mb-5 flex flex-col gap-4 border-b border-border/50 pb-4 lg:flex-row lg:items-end lg:justify-between">
-          <ReportSectionIntro
-            title={detail.sectionTitle}
-            countLabel={`${filtered.length} rows`}
-            description={detail.sectionHint}
-            accent={detail.accent}
-            soft={detail.soft}
-          />
-          <FilterToolbar
-            search={query}
-            onSearchChange={setQuery}
-            searchPlaceholder="Search companies…"
-            searchLabel="Search companies"
-            filters={filters}
-            filterValue={filter}
-            onFilterChange={setFilter}
-            filterLabel="Filter companies"
-          />
+        <div className="mb-5 flex flex-col gap-4 border-b border-border/50 pb-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <ReportSectionIntro title={detail.sectionTitle} />
+            <FilterToolbar
+              search={query}
+              onSearchChange={setQuery}
+              searchPlaceholder="Search fraudulent entities…"
+              searchLabel="Search fraudulent entities"
+              filters={filters}
+              filterValue={filter}
+              onFilterChange={setFilter}
+              filterLabel="Filter companies"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {financeMetricIds.map((id) => {
+              const m = getFinanceMetricDetail(id)?.metric
+              if (!m) return null
+              const active = id === metricId
+              return (
+                <Link
+                  key={id}
+                  to="/finance/$metricId"
+                  params={{ metricId: id }}
+                  className={cn(
+                    "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+                    active
+                      ? "text-white"
+                      : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
+                  )}
+                  style={active ? { background: detail.accent } : undefined}
+                >
+                  {m.label.split(" ").slice(0, 3).join(" ")}
+                  {m.label.split(" ").length > 3 ? "…" : ""}
+                </Link>
+              )
+            })}
+          </div>
         </div>
 
-        <ul className="space-y-3">
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((r, i) => {
+            const cardClass = cn(
+              "group relative flex h-full flex-col gap-1.5 overflow-hidden rounded-lg border border-black/[0.05] bg-card p-2.5 transition-colors",
+              "hover:bg-muted/30 dark:border-white/[0.08] dark:bg-[#141c2c] dark:hover:bg-[#182233]",
+            )
+
             const body = (
               <>
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div
-                      className="flex size-10 shrink-0 items-center justify-center rounded-md text-white"
-                      style={{
-                        background: `linear-gradient(145deg, ${r.accent}, ${r.accent}cc)`,
-                      }}
-                    >
-                      <Building2 className="size-5" strokeWidth={1.9} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate font-display text-sm font-semibold text-foreground">
-                        {r.title}
-                      </p>
-                      <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                        {r.subtitle}
-                      </p>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div
+                    className="flex size-7 shrink-0 items-center justify-center rounded-md text-white"
+                    style={{
+                      background: `linear-gradient(145deg, ${r.accent}, ${r.accent}cc)`,
+                    }}
+                  >
+                    <Building2 className="size-3.5" strokeWidth={2} />
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-bold tracking-wide text-muted-foreground uppercase">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold text-foreground">
+                      {r.title}
+                    </p>
+                    <p className="truncate text-[10px] text-muted-foreground">
+                      {r.subtitle}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-[8px] font-semibold tracking-wide text-muted-foreground uppercase">
                       {r.primaryLabel}
                     </p>
                     <p
-                      className="mt-0.5 font-display text-lg font-semibold tabular-nums"
+                      className="font-display text-sm font-semibold tabular-nums leading-tight"
                       style={{ color: r.accent }}
                     >
                       {r.primary}
@@ -190,7 +175,7 @@ function FinanceMetricDetailPage() {
                   </div>
                 </div>
 
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted/70 dark:bg-white/[0.06]">
+                <div className="h-1 overflow-hidden rounded-full bg-muted/70 dark:bg-white/[0.06]">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -200,24 +185,20 @@ function FinanceMetricDetailPage() {
                   />
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  <div className="rounded-md bg-muted/40 px-2.5 py-2 dark:bg-white/[0.04]">
-                    <p className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-                      {r.secondaryLabel}
-                    </p>
-                    <p className="mt-1 text-sm font-semibold tabular-nums text-foreground">
+                <div className="flex items-center justify-between gap-2 text-[10px]">
+                  <span className="min-w-0 truncate text-muted-foreground">
+                    {r.secondaryLabel}{" "}
+                    <span className="font-semibold tabular-nums text-foreground">
                       {r.secondary}
-                    </p>
-                  </div>
+                    </span>
+                  </span>
                   {r.tertiary != null && (
-                    <div className="rounded-md bg-muted/40 px-2.5 py-2 dark:bg-white/[0.04]">
-                      <p className="text-[10px] font-semibold tracking-wide text-muted-foreground uppercase">
-                        {r.tertiaryLabel}
-                      </p>
-                      <p className="mt-1 text-sm font-semibold tabular-nums text-foreground">
+                    <span className="shrink-0 text-muted-foreground">
+                      {r.tertiaryLabel}{" "}
+                      <span className="font-semibold tabular-nums text-foreground">
                         {r.tertiary}
-                      </p>
-                    </div>
+                      </span>
+                    </span>
                   )}
                 </div>
               </>
@@ -233,56 +214,24 @@ function FinanceMetricDetailPage() {
                   <Link
                     to="/companies/$companyId"
                     params={{ companyId: r.companyId }}
-                    className={cn(
-                      "block rounded-md border border-black/[0.05] bg-white p-3.5 transition-all",
-                      "hover:border-sky-300/50 hover:shadow-[0_8px_24px_rgba(15,23,42,0.06)]",
-                      "dark:border-white/[0.08] dark:bg-[#141c2c]",
-                    )}
+                    className={cardClass}
                   >
                     {body}
                   </Link>
                 ) : (
-                  <div className="rounded-md border border-black/[0.05] bg-white p-3.5 dark:border-white/[0.08] dark:bg-[#141c2c]">
-                    {body}
-                  </div>
+                  <div className={cardClass}>{body}</div>
                 )}
               </li>
             )
           })}
           {filtered.length === 0 && (
-            <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground">
+            <li className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground sm:col-span-2 lg:col-span-3">
               No rows match this search
             </li>
           )}
         </ul>
       </SectionCard>
 
-      <div className="flex flex-wrap gap-2">
-        {financeMetricIds.map((id) => {
-          const m = getFinanceMetricDetail(id)?.metric
-          if (!m) return null
-          const active = id === metricId
-          return (
-            <Link
-              key={id}
-              to="/finance/$metricId"
-              params={{ metricId: id }}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
-                active
-                  ? "text-white"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground",
-              )}
-              style={active ? { background: detail.accent } : undefined}
-            >
-              {m.label.split(" ").slice(0, 3).join(" ")}
-              {m.label.split(" ").length > 3 ? "…" : ""}
-            </Link>
-          )
-        })}
-      </div>
-
-      <ReportDisclaimer />
     </PageShell>
   )
 }

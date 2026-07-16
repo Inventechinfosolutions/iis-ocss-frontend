@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Search, Users, Wallet } from "lucide-react"
-import { matchesPersonSearch, victimRecords } from "@/data/kpi-drilldown-data"
+import { kpiLabels, matchesPersonSearch, programmeTotals, victimRecords } from "@/data/kpi-drilldown-data"
 import { formatINR, formatNumber } from "@/lib/format"
 import { EntityCard } from "@/components/drilldown/entity-card"
 import { EntityTable } from "@/components/drilldown/entity-table"
@@ -70,8 +70,8 @@ function VictimsPage() {
     <PageShell>
       <PageHero
         eyebrow="Depositors"
-        title="Victims registered"
-        description="People who lost money to fraudulent entities. Search by name, PAN, Aadhaar, or customer ID, then open a person to see their investments and returns."
+        title={kpiLabels.depositors}
+        description="Registered depositors under fraudulent entities. Search by name, PAN, Aadhaar, or customer ID, then open a record to view deposits and returns received."
         icon={Users}
         backTo="/"
         accent="#6366f1"
@@ -80,15 +80,15 @@ function VictimsPage() {
       <div className="grid gap-3 sm:grid-cols-3">
         <SparkStatCard
           id="v-total"
-          label="Sample records"
-          value={formatNumber(victimRecords.length)}
+          label={kpiLabels.depositors}
+          value={formatNumber(programmeTotals.depositors)}
           tone="violet"
           icon={Users}
-          spark={[4, 5, 5, 6, 7, 7, 8]}
+          spark={[171000, 176800, 174400, 180200, 178600, 183400, programmeTotals.depositors]}
         />
         <SparkStatCard
           id="v-match"
-          label="Matching now"
+          label="Matching records"
           value={formatNumber(filtered.length)}
           tone="blue"
           icon={Search}
@@ -96,28 +96,23 @@ function VictimsPage() {
         />
         <SparkStatCard
           id="v-money"
-          label="Invested (sample)"
-          value={formatINR(
-            victimRecords.reduce(
-              (s, v) => s + v.investments.reduce((a, i) => a + i.invested, 0),
-              0,
-            ),
-          )}
+          label={kpiLabels.investments}
+          value={formatINR(programmeTotals.totalDeposits)}
           tone="gold"
           icon={Wallet}
-          spark={[40, 48, 55, 62, 70, 78, 85]}
+          spark={[418, 424, 420, 426, 422, 427, 428]}
         />
       </div>
 
       <SectionCard
-        title="Victim list"
-        description="Tap a person for full investment detail"
+        title="Depositor register"
+        description="Open a depositor record for full deposit detail"
         toolbar={
           <FilterToolbar
             search={query}
             onSearchChange={setQuery}
-            searchPlaceholder="Search users…"
-            searchLabel="Search victims"
+            searchPlaceholder="Search depositors…"
+            searchLabel="Search depositors"
             filters={districtFilters}
             filterValue={filter}
             onFilterChange={setFilter}
@@ -129,7 +124,7 @@ function VictimsPage() {
         {view === "card" ? (
           <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {paged.map((v, idx) => {
-              const invested = v.investments.reduce((s, i) => s + i.invested, 0)
+              const deposited = v.investments.reduce((s, i) => s + i.invested, 0)
               const returns = v.investments.reduce((s, i) => s + i.returnsTaken, 0)
               const accent = accents[((page - 1) * PAGE_SIZE + idx) % accents.length]
               return (
@@ -148,7 +143,7 @@ function VictimsPage() {
                         label: "returns",
                         emphasize: true,
                       },
-                      { value: formatINR(invested, false), label: "invested" },
+                      { value: formatINR(deposited, false), label: "deposited" },
                       { value: v.pan, label: "PAN" },
                       { value: v.customerId, label: "customer ID" },
                     ]}
@@ -158,21 +153,21 @@ function VictimsPage() {
             })}
             {filtered.length === 0 && (
               <li className="rounded-md border border-dashed border-border px-4 py-12 text-center text-sm text-muted-foreground sm:col-span-2 xl:col-span-3">
-                No victims match this search
+                No depositors match this search
               </li>
             )}
           </ul>
         ) : (
           <EntityTable
-            emptyLabel="No victims match this search"
+            emptyLabel="No depositors match this search"
             columns={[
               { key: "district", header: "District" },
-              { key: "invested", header: "Invested", align: "right" },
+              { key: "deposited", header: "Deposited", align: "right" },
               { key: "returns", header: "Returns", align: "right" },
               { key: "pan", header: "PAN" },
             ]}
             rows={paged.map((v, idx) => {
-              const invested = v.investments.reduce((s, i) => s + i.invested, 0)
+              const deposited = v.investments.reduce((s, i) => s + i.invested, 0)
               const returns = v.investments.reduce((s, i) => s + i.returnsTaken, 0)
               return {
                 id: v.id,
@@ -184,7 +179,7 @@ function VictimsPage() {
                 subtitle: v.customerId,
                 cells: {
                   district: { value: v.district },
-                  invested: { value: formatINR(invested, false) },
+                  deposited: { value: formatINR(deposited, false) },
                   returns: {
                     value: formatINR(returns, false),
                     emphasize: true,

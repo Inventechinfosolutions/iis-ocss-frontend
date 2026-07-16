@@ -6,7 +6,6 @@ import {
   Table2,
   type LucideIcon,
 } from "lucide-react"
-import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { HeroKarnatakaGraphic } from "@/components/drilldown/hero-karnataka-graphic"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -120,31 +119,6 @@ export function PageHero({
   )
 }
 
-function MiniSpark({ data, color, id }: { data: number[]; color: string; id: string }) {
-  const chartData = data.map((v, i) => ({ i, v }))
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={chartData} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
-        <defs>
-          <linearGradient id={`drill-spark-${id}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity={0.4} />
-            <stop offset="100%" stopColor={color} stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <Area
-          type="monotone"
-          dataKey="v"
-          stroke={color}
-          strokeWidth={2}
-          fill={`url(#drill-spark-${id})`}
-          isAnimationActive={false}
-          dot={false}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  )
-}
-
 const toneMap = {
   blue: { color: "#3b82f6", soft: "#dbeafe", softDark: "rgba(59,130,246,0.18)" },
   violet: { color: "#8b5cf6", soft: "#ede9fe", softDark: "rgba(139,92,246,0.18)" },
@@ -161,15 +135,13 @@ export function SparkStatCard({
   value,
   tone = "blue",
   icon: Icon = Building2,
-  spark,
-  id,
 }: {
   label: string
   value: string
   tone?: StatTone
   icon?: LucideIcon
-  spark: number[]
-  id: string
+  spark?: number[]
+  id?: string
 }) {
   const t = toneMap[tone]
   return (
@@ -188,22 +160,19 @@ export function SparkStatCard({
           background: `linear-gradient(160deg, ${t.softDark} 0%, rgba(20,28,44,1) 75%)`,
         }}
       />
-      <div className="relative flex items-start justify-between gap-3">
+      <div className="relative flex min-w-0 items-center gap-3">
         <div
-          className="flex size-10 items-center justify-center rounded-sm"
+          className="flex size-10 shrink-0 items-center justify-center rounded-sm"
           style={{ background: t.soft, color: t.color }}
         >
           <Icon className="size-4 dark:brightness-125" strokeWidth={2} />
         </div>
-        <div className="h-9 w-[4.5rem] shrink-0 opacity-90">
-          <MiniSpark data={spark} color={t.color} id={id} />
-        </div>
+        <p className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase leading-snug">
+          {label}
+        </p>
       </div>
-      <p className="relative mt-3 text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
-        {label}
-      </p>
       <p
-        className="relative mt-1 font-display text-[1.55rem] leading-none font-semibold tracking-tight tabular-nums"
+        className="relative mt-3 font-display text-[1.55rem] leading-none font-semibold tracking-tight tabular-nums"
         style={{ color: t.color }}
       >
         {value}

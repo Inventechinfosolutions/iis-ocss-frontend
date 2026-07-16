@@ -1,4 +1,4 @@
-/** Sample drill-down data for KPI card detail views */
+/** Operational drill-down data for KPI card detail views */
 
 export type FeScheme = {
   name: string
@@ -621,7 +621,7 @@ export const claimRecords: ClaimRecord[] = [
     pan: "CKLMI9012R",
     aadhaar: "XXXX-XXXX-5520",
     district: "Belagavi",
-    status: "Under verification",
+    status: "Under Evaluation",
     claimAmount: 14_00_000,
     investments: victimRecords[2].investments,
   },
@@ -681,7 +681,7 @@ export const claimRecords: ClaimRecord[] = [
     pan: "HIJFB8899U",
     aadhaar: "XXXX-XXXX-8834",
     district: "Kalaburagi",
-    status: "Under verification",
+    status: "Under Evaluation",
     claimAmount: 6_24_000,
     investments: victimRecords[7].investments,
   },
@@ -869,6 +869,27 @@ export const recoveredAssets: RecoveredAsset[] = [
     status: "Transferred",
   },
 ]
+
+export const programmeTotals = {
+  entities: feCompanies.length,
+  depositors: feCompanies.reduce((sum, company) => sum + company.victims, 0),
+  totalDeposits: feCompanies.reduce((sum, company) => sum + company.totalAmount, 0),
+  claims: feCompanies.reduce((sum, company) => sum + company.claims, 0),
+  grossLiability: feCompanies.reduce((sum, company) => sum + company.liability, 0),
+  recovered: feCompanies.reduce((sum, company) => sum + company.recovered, 0),
+  settled: feCompanies.reduce((sum, company) => sum + company.settled, 0),
+  assetsListed: recoveredAssets.length,
+}
+
+export const kpiLabels = {
+  fes: "Fraudulent Entities Registered",
+  depositors: "Depositors Registered",
+  investments: "Total Deposit Amount",
+  claims: "Claims Submitted",
+  liability: "Total Settlement Liability",
+  recovered: "Recovered Amount from Attached Assets",
+  settled: "Settlement Amount Disbursed",
+} as const
 
 export function matchesPersonSearch(
   query: string,

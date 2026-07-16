@@ -1,6 +1,6 @@
 export type TrendDirection = "up" | "down" | "flat"
 
-import { feCompanies } from "@/data/kpi-drilldown-data"
+import { feCompanies, kpiLabels, programmeTotals } from "@/data/kpi-drilldown-data"
 
 export type KpiItem = {
   id: string
@@ -59,8 +59,8 @@ export type ReportItem = {
 }
 
 export const dashboardMeta = {
-  title: "Online Claim Settlement System",
-  shortTitle: "OCSS",
+  title: "Claim Settlement Management System",
+  shortTitle: "CSMS",
   authority: "Competent Authority — Karnataka KPID Act",
   lastUpdated: "13 Jul 2026 · 12:42 IST",
   environment: "Production",
@@ -69,52 +69,52 @@ export const dashboardMeta = {
 export const kpiData: KpiItem[] = [
   {
     id: "fes",
-    label: "Fraudulent Entities Registered",
-    value: feCompanies.length,
+    label: kpiLabels.fes,
+    value: programmeTotals.entities,
     format: "number",
     trend: 2,
     trendDirection: "up",
     hint: "Under KPID proceedings",
-    spark: [8, 9.4, 8.6, 10.2, 9.5, 11.3, feCompanies.length],
+    spark: [8, 9.4, 8.6, 10.2, 9.5, 11.3, programmeTotals.entities],
     accent: "cyan",
   },
   {
     id: "depositors",
-    label: "Depositors Registered",
-    value: 184_562,
+    label: kpiLabels.depositors,
+    value: programmeTotals.depositors,
     format: "number",
     trend: 1.4,
     trendDirection: "up",
     hint: "Registered in the system",
-    spark: [171000, 176800, 174400, 180200, 178600, 183400, 184562],
+    spark: [171000, 176800, 174400, 180200, 178600, 183400, programmeTotals.depositors],
     accent: "cyan",
   },
   {
     id: "investments",
-    label: "Total Investment Amount",
-    value: 4_286_40_00_000,
+    label: kpiLabels.investments,
+    value: programmeTotals.totalDeposits,
     format: "currency",
     trend: 0.3,
     trendDirection: "flat",
-    hint: "Invested by depositors",
+    hint: "Deposited by depositors",
     spark: [418, 424, 420, 426, 422, 427, 428],
     accent: "violet",
   },
   {
     id: "claims",
-    label: "Claims Submitted",
-    value: 156_842,
+    label: kpiLabels.claims,
+    value: programmeTotals.claims,
     format: "number",
     trend: 3.2,
     trendDirection: "up",
     hint: "Applications received",
-    spark: [131000, 142000, 138500, 149200, 146800, 154600, 156842],
+    spark: [131000, 142000, 138500, 149200, 146800, 154600, programmeTotals.claims],
     accent: "cyan",
   },
   {
     id: "liability",
-    label: "Outstanding Settlement Liability",
-    value: 3_912_75_00_000,
+    label: kpiLabels.liability,
+    value: programmeTotals.grossLiability,
     format: "currency",
     trend: 1.1,
     trendDirection: "down",
@@ -124,8 +124,8 @@ export const kpiData: KpiItem[] = [
   },
   {
     id: "recovered",
-    label: "Recovered Amount from Attached Assets",
-    value: 1_248_60_00_000,
+    label: kpiLabels.recovered,
+    value: programmeTotals.recovered,
     format: "currency",
     trend: 4.8,
     trendDirection: "up",
@@ -135,8 +135,8 @@ export const kpiData: KpiItem[] = [
   },
   {
     id: "settled",
-    label: "Settlement Amount Disbursed",
-    value: 986_45_00_000,
+    label: kpiLabels.settled,
+    value: programmeTotals.settled,
     format: "currency",
     trend: 5.6,
     trendDirection: "up",
@@ -149,29 +149,29 @@ export const kpiData: KpiItem[] = [
 export const funnelStages: FunnelStage[] = [
   {
     id: "submitted",
-    label: "Claim filed",
+    label: "Claim submitted",
     count: 156_842,
     percent: 100,
     color: "#3b82f6",
   },
   {
     id: "verification",
-    label: "Checking documents",
+    label: "Under Evaluation",
     count: 42_318,
     percent: 27.0,
     color: "#93c5fd",
   },
   {
     id: "docs",
-    label: "Waiting for more papers",
+    label: "Pending additional documents",
     count: 18_654,
     percent: 11.9,
     color: "#f59e0b",
-    detail: "Victim must re-upload",
+    detail: "Depositor must re-upload",
   },
   {
     id: "assessed",
-    label: "Eligibility decided",
+    label: "Assessment completed",
     count: 98_420,
     percent: 62.8,
     color: "#0ea5e9",
@@ -179,35 +179,35 @@ export const funnelStages: FunnelStage[] = [
   },
   {
     id: "approved",
-    label: "Claim accepted",
+    label: "Claim approved",
     count: 79_856,
     percent: 50.9,
     color: "#22c55e",
   },
   {
     id: "clarification",
-    label: "Needs clarification",
+    label: "Pending clarification",
     count: 6_412,
     percent: 4.1,
     color: "#fbbf24",
   },
   {
     id: "settlement",
-    label: "Payout amount fixed",
+    label: "Settlement amount calculated",
     count: 71_280,
     percent: 45.4,
     color: "#22c55e",
   },
   {
     id: "paid",
-    label: "Money sent to bank",
+    label: "Payment disbursed",
     count: 58_940,
     percent: 37.6,
     color: "#16a34a",
   },
   {
     id: "closed",
-    label: "Case finished",
+    label: "Claim settled",
     count: 52_118,
     percent: 33.2,
     color: "#15803d",
@@ -216,14 +216,6 @@ export const funnelStages: FunnelStage[] = [
 
 /** Unique money breakdown — not repeated in the top cards */
 export const financialMetrics: FinancialMetric[] = [
-  {
-    id: "available-fund",
-    label: "Funds Available for Immediate Settlement",
-    value: 262_15_00_000,
-    format: "currency",
-    barPercent: 21,
-    tone: "success",
-  },
   {
     id: "approved-liability",
     label: "Total Approved Settlement Amount",
@@ -249,6 +241,14 @@ export const financialMetrics: FinancialMetric[] = [
     tone: "gold",
   },
   {
+    id: "available-fund",
+    label: "Funds Available for Immediate Settlement",
+    value: 262_15_00_000,
+    format: "currency",
+    barPercent: 21,
+    tone: "success",
+  },
+  {
     id: "equitable-ratio",
     label: "Settlement Distribution Percentage",
     value: 34.5,
@@ -261,14 +261,14 @@ export const financialMetrics: FinancialMetric[] = [
 export const financialFooterStats = [
   {
     id: "total-cash",
-    label: "Total cash available",
+    label: "Total funds available",
     value: "₹5,188 Cr",
     icon: "pie" as const,
     accent: "#3b82f6",
   },
   {
     id: "eligible",
-    label: "Eligible victims",
+    label: "Eligible depositors",
     value: "2,48,652",
     icon: "users" as const,
     accent: "#60a5fa",
@@ -311,32 +311,32 @@ export const claimsByEntity = [
 
 export const assetRecovery = [
   {
-    stage: "Property seized",
+    stage: "Properties taken over",
     count: 428,
     amount: 2_014_00_00_000,
     percent: 100,
-    detail: "Assets attached and taken into custody",
+    detail: "Properties attached and taken into custody",
   },
   {
-    stage: "Price estimated",
+    stage: "Value assessed",
     count: 386,
     amount: 1_812_60_00_000,
     percent: 90,
-    detail: "Official valuation done, ready for auction",
+    detail: "Official valuation completed; ready for auction",
   },
   {
     stage: "Sold in auction",
     count: 298,
     amount: 1_409_80_00_000,
     percent: 70,
-    detail: "Properties sold through court auction",
+    detail: "Properties disposed through court auction",
   },
   {
     stage: "Money received",
     count: 264,
-    amount: 1_248_60_00_000,
+    amount: programmeTotals.recovered,
     percent: 62,
-    detail: "Sale proceeds deposited for victim payout",
+    detail: "Auction sale amount deposited for depositor settlement",
   },
 ]
 
@@ -368,7 +368,7 @@ export const alerts: AlertItem[] = [
   {
     id: "a4",
     severity: "info",
-    title: "Victims must upload papers again",
+    title: "Depositors must upload documents again",
     detail: "Extra documents window is still open",
     count: 18_654,
     time: "2 hr ago",
@@ -387,15 +387,15 @@ export const reports: ReportItem[] = [
   {
     id: "fe",
     title: "Report by fraudulent entities",
-    description: "Claims, recovered money, and payouts for each company",
+    description: "Claims, recovered amounts, and disbursements for each fraudulent entity",
     href: "/reports/scam-companies",
     to: "/reports/scam-companies",
     icon: "building",
   },
   {
     id: "investor",
-    title: "Report by victim",
-    description: "One person’s claim and payment details",
+    title: "Report by depositor",
+    description: "Depositor-wise claim and payment details",
     href: "/reports/victims",
     to: "/reports/victims",
     icon: "user",
@@ -410,8 +410,8 @@ export const reports: ReportItem[] = [
   },
   {
     id: "settlement",
-    title: "Settlement money report",
-    description: "How funds are shared and what is still left to pay",
+    title: "Settlement report",
+    description: "Fund allocation and outstanding settlement liability",
     href: "/reports/settlement",
     to: "/reports/settlement",
     icon: "wallet",
@@ -419,7 +419,7 @@ export const reports: ReportItem[] = [
   {
     id: "payment",
     title: "Bank payment report",
-    description: "Money sent to victims with bank / UTR references",
+    description: "Amounts disbursed to depositors with bank / UTR references",
     href: "/reports/payments",
     to: "/reports/payments",
     icon: "bank",
@@ -468,10 +468,10 @@ export const sampleSearchHits = [
 ]
 
 export const userMeta = {
-  name: "admin.reddy",
-  role: "Competent Authority",
-  initials: "AR",
-  greeting: "Live signals from claims intake, verification, recovery, and settlement — unfiltered, system-wide.",
+  name: "Super Admin",
+  role: "Special Officer and Competent Authority",
+  initials: "SA",
+  greeting: "Live programme indicators from claims intake, verification, asset recovery, and settlement.",
 }
 
 export type NavItem = {
@@ -513,13 +513,13 @@ export const navGroups: NavGroup[] = [
     heading: "Claim settlement",
     items: [
       { id: "entities", label: "Fraudulent entities", icon: "entities", badge: String(feCompanies.length) },
-      { id: "depositors", label: "Victims", icon: "depositors" },
+      { id: "depositors", label: "Depositors", icon: "depositors" },
       { id: "claims", label: "Claims", icon: "claims" },
-      { id: "verification", label: "Document check", icon: "verification", badge: "42K" },
+      { id: "verification", label: "Document verification", icon: "verification", badge: "42K" },
       { id: "assessment", label: "Eligibility", icon: "assessment" },
-      { id: "settlement", label: "Payout calculation", icon: "settlement" },
+      { id: "settlement", label: "Settlement calculation", icon: "settlement" },
       { id: "payments", label: "Bank payments", icon: "payments" },
-      { id: "recovery", label: "Property recovery", icon: "recovery" },
+      { id: "recovery", label: "Asset recovery", icon: "recovery" },
     ],
   },
   {
@@ -602,11 +602,11 @@ export const districtStatsByGeoName = Object.fromEntries(
 
 /** Average days — unique vs top totals */
 export const processingSpeed = [
-  { id: "verify", label: "Check papers", value: 12, unit: "days", color: "#3b82f6" },
-  { id: "assess", label: "Decide eligible", value: 18, unit: "days", color: "#0ea5e9" },
-  { id: "settle", label: "Fix payout", value: 9, unit: "days", color: "#f59e0b" },
-  { id: "pay", label: "Send money", value: 6, unit: "days", color: "#22c55e" },
-  { id: "full", label: "Full journey", value: 45, unit: "days", color: "#f43f5e" },
+  { id: "verify", label: "Document verification", value: 12, unit: "days", color: "#3b82f6" },
+  { id: "assess", label: "Eligibility assessment", value: 18, unit: "days", color: "#0ea5e9" },
+  { id: "settle", label: "Settlement calculation", value: 9, unit: "days", color: "#f59e0b" },
+  { id: "pay", label: "Payment disbursement", value: 6, unit: "days", color: "#22c55e" },
+  { id: "full", label: "Full processing cycle", value: 45, unit: "days", color: "#f43f5e" },
 ]
 
 /** Module 5 — Claim Notification windows */
@@ -656,30 +656,30 @@ export const eligibilityOutcomes = [
     id: "eligible",
     label: "Eligible for settlement",
     count: 86_214,
-    hint: "Can get a share of recovered money",
+    hint: "Eligible for settlement share from recovered assets",
     tone: "success" as const,
   },
   {
     id: "not-eligible",
     label: "Not eligible",
     count: 12_206,
-    hint: "Failed checks / wrong documents / rules",
+    hint: "Failed verification / incomplete documents / ineligible under rules",
     tone: "rose" as const,
   },
   {
     id: "waiting",
     label: "Still under assessment",
     count: 42_318,
-    hint: "Officers still checking",
+    hint: "Under officer assessment",
     tone: "gold" as const,
   },
 ]
 
 /** Module 7 — Assessment outcome (eligible / not eligible) */
 export const safetyChecks = [
-  { id: "dup-fe", label: "Duplicate Fraudulent Entities Prevented", count: 4, hint: "Duplicate Fraudulent Entity records prevented during registration." },
+  // { id: "dup-fe", label: "Duplicate Fraudulent Entities Prevented", count: 4, hint: "Duplicate Fraudulent Entity records prevented during registration." },
   { id: "dup-person", label: "Duplicate Depositor Profiles Merged", count: 1_842, hint: "Aadhaar, PAN, Mobile Number" },
   { id: "dup-claim", label: "Duplicate Claims Prevented", count: 128, hint: "Duplicate claim applications detected before processing." },
   { id: "dup-pay", label: "Duplicate Settlement Payments Prevented", count: 37, hint: "Duplicate payment attempts identified and blocked." },
-  { id: "mismatch", label: "Investment Data Mismatches Identified", count: 346, hint: "Differences detected between investment records and supporting documents." },
+  { id: "mismatch", label: "Deposit Data Mismatches Identified", count: 346, hint: "Differences detected between deposit records and supporting documents." },
 ]
