@@ -255,7 +255,7 @@ export function Sidebar({
 
                 return (
                   <Tooltip key={item.id}>
-                    <TooltipTrigger asChild>{link}</TooltipTrigger>
+                    <TooltipTrigger render={link} />
                     <TooltipContent side="right" sideOffset={8}>
                       {item.label}
                       {item.badge ? ` · ${item.badge}` : ""}
@@ -300,25 +300,29 @@ export function Sidebar({
           ) : (
             <div className="flex flex-col items-center gap-1.5">
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex size-9 items-center justify-center rounded-full bg-[#2563eb] text-[11px] font-bold tracking-wide text-white">
-                    {userMeta.initials}
-                  </div>
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <div className="flex size-9 items-center justify-center rounded-full bg-[#2563eb] text-[11px] font-bold tracking-wide text-white">
+                      {userMeta.initials}
+                    </div>
+                  }
+                />
                 <TooltipContent side="right" sideOffset={8}>
                   {userMeta.name} · {userMeta.role}
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-rose-300"
-                    aria-label="Sign out"
-                  >
-                    <LogOut className="size-4" />
-                  </button>
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <button
+                      type="button"
+                      className="flex size-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-rose-300"
+                      aria-label="Sign out"
+                    >
+                      <LogOut className="size-4" />
+                    </button>
+                  }
+                />
                 <TooltipContent side="right" sideOffset={8}>
                   Sign out
                 </TooltipContent>
