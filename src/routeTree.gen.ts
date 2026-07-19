@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ClaimRegistrationRouteImport } from './routes/claim-registration'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VictimsIndexRouteImport } from './routes/victims/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
@@ -30,6 +31,11 @@ import { Route as AlertsAlertIdRouteImport } from './routes/alerts/$alertId'
 import { Route as CompaniesCompanyIdIndexRouteImport } from './routes/companies/$companyId/index'
 import { Route as CompaniesCompanyIdSchemesSchemeIdRouteImport } from './routes/companies/$companyId/schemes/$schemeId'
 
+const ClaimRegistrationRoute = ClaimRegistrationRouteImport.update({
+  id: '/claim-registration',
+  path: '/claim-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -134,6 +140,7 @@ const CompaniesCompanyIdSchemesSchemeIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -178,6 +186,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -268,6 +280,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClaimRegistrationRoute: typeof ClaimRegistrationRoute
   AlertsAlertIdRoute: typeof AlertsAlertIdRoute
   ClaimWindowsWindowIdRoute: typeof ClaimWindowsWindowIdRoute
   ClaimsClaimIdRoute: typeof ClaimsClaimIdRoute
@@ -289,6 +302,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/claim-registration': {
+      id: '/claim-registration'
+      path: '/claim-registration'
+      fullPath: '/claim-registration'
+      preLoaderRoute: typeof ClaimRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -448,6 +468,7 @@ const CompaniesCompanyIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClaimRegistrationRoute: ClaimRegistrationRoute,
   AlertsAlertIdRoute: AlertsAlertIdRoute,
   ClaimWindowsWindowIdRoute: ClaimWindowsWindowIdRoute,
   ClaimsClaimIdRoute: ClaimsClaimIdRoute,

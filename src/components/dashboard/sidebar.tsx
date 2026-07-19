@@ -7,6 +7,7 @@ import {
   ChevronsRight,
   ClipboardCheck,
   Database,
+  FilePlus2,
   FileText,
   Gavel,
   LayoutDashboard,
@@ -33,6 +34,7 @@ const SIDEBAR_COLLAPSED_KEY = "ocss-sidebar-collapsed"
 const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
   overview: LayoutDashboard,
   analytics: LineChart,
+  registration: FilePlus2,
   entities: Building2,
   depositors: Users,
   claims: FileText,
@@ -50,10 +52,11 @@ const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
 const navRoutes: Partial<
   Record<
     string,
-    "/" | "/companies" | "/victims" | "/claims" | "/assets" | "/reports"
+    "/" | "/claim-registration" | "/companies" | "/victims" | "/claims" | "/assets" | "/reports"
   >
 > = {
   overview: "/",
+  "claim-registration": "/claim-registration",
   entities: "/companies",
   depositors: "/victims",
   claims: "/claims",

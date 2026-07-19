@@ -46,7 +46,7 @@ export function GlobalSearch() {
     <div className="relative w-full max-w-2xl">
       <div
         className={cn(
-          "group flex items-center gap-2 rounded-2xl border border-border/70 bg-card/90 px-3 shadow-[0_4px_20px_rgba(18,57,92,0.06)] backdrop-blur-md transition-all",
+          "group flex items-center gap-2 rounded-2xl border border-border/70 bg-transparent px-3 transition-all dark:bg-transparent",
           "focus-within:border-primary/40 focus-within:ring-3 focus-within:ring-primary/15",
           open && "border-primary/40 ring-3 ring-primary/15",
         )}
@@ -61,7 +61,7 @@ export function GlobalSearch() {
           onFocus={() => setOpen(true)}
           onBlur={() => window.setTimeout(() => setOpen(false), 160)}
           placeholder={`Search by ${searchPlaceholders[placeholderIndex]}…`}
-          className="h-11 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0 md:text-sm"
+          className="h-11 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0 md:text-sm dark:bg-transparent"
           aria-label="Global search across CSMS"
         />
         {query ? (
