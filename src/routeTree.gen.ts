@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ClaimRegistrationRouteImport } from './routes/claim-registration'
+import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VictimsIndexRouteImport } from './routes/victims/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
@@ -34,6 +35,11 @@ import { Route as CompaniesCompanyIdSchemesSchemeIdRouteImport } from './routes/
 const ClaimRegistrationRoute = ClaimRegistrationRouteImport.update({
   id: '/claim-registration',
   path: '/claim-registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssessmentRoute = AssessmentRouteImport.update({
+  id: '/assessment',
+  path: '/assessment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -140,6 +146,7 @@ const CompaniesCompanyIdSchemesSchemeIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
@@ -186,6 +194,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/assessment'
     | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/assessment'
     | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/assessment'
     | '/claim-registration'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
@@ -280,6 +292,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssessmentRoute: typeof AssessmentRoute
   ClaimRegistrationRoute: typeof ClaimRegistrationRoute
   AlertsAlertIdRoute: typeof AlertsAlertIdRoute
   ClaimWindowsWindowIdRoute: typeof ClaimWindowsWindowIdRoute
@@ -307,6 +320,13 @@ declare module '@tanstack/react-router' {
       path: '/claim-registration'
       fullPath: '/claim-registration'
       preLoaderRoute: typeof ClaimRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assessment': {
+      id: '/assessment'
+      path: '/assessment'
+      fullPath: '/assessment'
+      preLoaderRoute: typeof AssessmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -468,6 +488,7 @@ const CompaniesCompanyIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssessmentRoute: AssessmentRoute,
   ClaimRegistrationRoute: ClaimRegistrationRoute,
   AlertsAlertIdRoute: AlertsAlertIdRoute,
   ClaimWindowsWindowIdRoute: ClaimWindowsWindowIdRoute,

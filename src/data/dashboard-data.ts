@@ -518,7 +518,7 @@ export const navGroups: NavGroup[] = [
       { id: "depositors", label: "Depositors", icon: "depositors" },
       { id: "claims", label: "Claims", icon: "claims" },
       { id: "verification", label: "Document verification", icon: "verification", badge: "42K" },
-      { id: "assessment", label: "Eligibility", icon: "assessment" },
+      { id: "assessment", label: "Assessment", icon: "assessment" },
       { id: "settlement", label: "Settlement calculation", icon: "settlement" },
       { id: "payments", label: "Bank payments", icon: "payments" },
       { id: "recovery", label: "Asset recovery", icon: "recovery" },

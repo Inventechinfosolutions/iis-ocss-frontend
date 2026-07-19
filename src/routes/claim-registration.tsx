@@ -158,11 +158,11 @@ function DepositTransactionTable({ prefix }: { prefix: string }) {
             <tr className="text-[10px] font-semibold text-muted-foreground uppercase">
               <th className="w-10 px-1.5 py-1">Sl. No.</th>
               <th className="w-32 px-1.5 py-1">Date</th>
-              <th className="px-1.5 py-1">Deposit (₹)</th>
+              <th className="px-1.5 py-1">Deposit (Rs)</th>
               <th className="px-1.5 py-1">
-                Cash / NEFT / RTGS / IMPS / Cheque No.
+                CASH / NEFT / RTGS / IMPS / Cheque No.
               </th>
-              <th className="px-1.5 py-1">Total deposit (₹)</th>
+              <th className="px-1.5 py-1">Total Deposit (Rs)</th>
               <th className="px-1.5 py-1">Remarks</th>
             </tr>
           </thead>
@@ -241,17 +241,38 @@ function ApplicantInstructions({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const [instructionsAccepted, setInstructionsAccepted] = useState(false)
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[calc(100svh-2rem)] w-[min(1120px,calc(100%-2rem))] max-w-none flex-col gap-0 overflow-hidden p-0">
-        <DialogHeader className="shrink-0 border-b border-border px-5 py-4 sm:px-6">
-          <DialogTitle className="font-display text-base font-semibold tracking-tight sm:text-lg">
-            Instructions to applicants
-          </DialogTitle>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (nextOpen || instructionsAccepted) onOpenChange(nextOpen)
+      }}
+    >
+      <DialogContent
+        showCloseButton={false}
+        className="!fixed !top-1/2 !left-1/2 flex max-h-[90svh] !w-[calc(100vw-2rem)] !max-w-[960px] -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-2xl border border-border/70 p-0 shadow-2xl sm:!max-w-[960px] lg:!left-[calc((100vw+var(--app-sidebar-width))/2)] lg:!w-[calc(100vw-var(--app-sidebar-width)-2rem)]"
+      >
+        <DialogHeader className="shrink-0 border-b border-primary/15 bg-gradient-to-r from-primary/[0.10] via-primary/[0.04] to-transparent px-5 py-5 sm:px-7">
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+              <FileText className="size-5" />
+            </span>
+            <div>
+              <DialogTitle className="font-display text-lg font-semibold tracking-tight sm:text-xl">
+                Instructions to applicants
+              </DialogTitle>
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                Please read these guidelines carefully before registering your
+                claim.
+              </p>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 text-xs leading-relaxed text-muted-foreground sm:px-6 sm:text-[13px]">
-          <div className="space-y-2">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-muted/20 px-5 py-5 text-[13px] leading-relaxed text-muted-foreground sm:px-7 sm:py-6 sm:text-sm">
+          <div className="grid gap-3 md:grid-cols-2 [&>p]:rounded-xl [&>p]:border [&>p]:border-border/70 [&>p]:bg-background [&>p]:p-4 [&>p]:shadow-xs">
             <p>
               <strong className="text-foreground">Form:</strong> For manual
               submission, the applicant must produce depositor identity proof
@@ -303,8 +324,11 @@ function ApplicantInstructions({
             </p>
           </div>
 
-          <section className="mt-5 border-t border-border pt-4">
-            <h3 className="font-display text-sm font-semibold text-foreground">
+          <section className="mt-4 rounded-xl border border-border/70 bg-background p-4 shadow-xs sm:p-5">
+            <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-foreground sm:text-base">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                1
+              </span>
               Note 1: Special procedure
             </h3>
             <p className="mt-2">
@@ -342,8 +366,11 @@ function ApplicantInstructions({
             </ol>
           </section>
 
-          <section className="mt-5 border-t border-border pt-4">
-            <h3 className="font-display text-sm font-semibold text-foreground">
+          <section className="mt-3 rounded-xl border border-border/70 bg-background p-4 shadow-xs sm:p-5">
+            <h3 className="flex items-center gap-2 font-display text-sm font-semibold text-foreground sm:text-base">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                2
+              </span>
               Note 2: Filing by nominee, legal heir, or Power of Attorney
               holder
             </h3>
@@ -360,8 +387,28 @@ function ApplicantInstructions({
           </section>
         </div>
 
-        <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none px-5 py-3 sm:px-6">
-          <DialogClose render={<Button />}>Close</DialogClose>
+        <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none border-t border-border/70 bg-background px-5 py-4 sm:items-center sm:justify-between sm:px-7">
+          <label className="flex cursor-pointer items-center gap-3 rounded-lg text-xs font-medium text-foreground sm:text-sm">
+            <input
+              type="checkbox"
+              checked={instructionsAccepted}
+              onChange={(event) =>
+                setInstructionsAccepted(event.target.checked)
+              }
+              className="size-4.5 rounded border-input accent-primary"
+            />
+            <span>I agree to the instructions and conditions</span>
+          </label>
+          <DialogClose
+            render={
+              <Button
+                disabled={!instructionsAccepted}
+                className="min-w-36 shadow-sm"
+              />
+            }
+          >
+            Agree &amp; continue
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -371,7 +418,7 @@ function ApplicantInstructions({
 function ClaimRegistrationPage() {
   const [step, setStep] = useState<1 | 2>(1)
   const [submitted, setSubmitted] = useState(false)
-  const [instructionsOpen, setInstructionsOpen] = useState(false)
+  const [instructionsOpen, setInstructionsOpen] = useState(true)
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -496,14 +543,14 @@ function ClaimRegistrationPage() {
             <>
               <section className="grid gap-4 rounded-md bg-muted/20 p-4 sm:grid-cols-2">
                 <FormField
-                  label="Initial number"
+                  label="Serial Number"
                   name="initialNumber"
-                  placeholder="Enter initial number"
+                  placeholder="Enter serial number"
                 />
                 <FormField
-                  label="Application number"
+                  label="Def. C.A. CLNO"
                   name="applicationNumber"
-                  placeholder="Enter application number"
+                  placeholder="Enter the number"
                 />
                 <SelectField
                   label="Competent Authority"
@@ -517,9 +564,9 @@ function ClaimRegistrationPage() {
                   required
                 />
                 <SelectField
-                  label="Fraudulent entity"
+                  label="Financial Establishment / Branch"
                   name="fraudulentEntity"
-                  placeholder="Select fraudulent entity"
+                  placeholder="Select financial establishment"
                   options={establishmentOptions}
                   required
                 />
@@ -537,7 +584,7 @@ function ClaimRegistrationPage() {
 
               <FormSection number={1} title="Applicant details">
                 <FormField
-                  label="Name of depositor / claimant"
+                  label="Name of Claimant / Depositor"
                   name="applicantName"
                   placeholder="Enter full name"
                   required
@@ -615,10 +662,9 @@ function ClaimRegistrationPage() {
                   placeholder="Enter nominee name"
                 />
                 <FormField
-                  label="Nominee age"
+                  label="Gender & Age"
                   name="nomineeAge"
-                  type="number"
-                  placeholder="Enter age"
+                  placeholder="Enter gender and age"
                 />
                 <FormField
                   label="Relationship with depositor"
@@ -626,9 +672,9 @@ function ClaimRegistrationPage() {
                   placeholder="Enter relationship"
                 />
                 <FormField
-                  label="Nominee ID proof number"
+                  label="ID Proof of Nominee"
                   name="nomineeIdNumber"
-                  placeholder="Enter document number"
+                  placeholder="Enter ID proof details"
                 />
                 <FileField
                   label="Proof of nomination"
@@ -662,7 +708,7 @@ function ClaimRegistrationPage() {
 
               <FormSection number={4} title="Depositor bank details">
                 <FormField
-                  label="Bank account number"
+                  label="Bank Account No."
                   name="depositBankAccount"
                   placeholder="Enter account number"
                   required
@@ -687,7 +733,7 @@ function ClaimRegistrationPage() {
 
               <FormSection number={5} title="Bank details for refund">
                 <FormField
-                  label="Bank account number"
+                  label="Bank Account No."
                   name="refundBankAccount"
                   placeholder="Enter account number"
                   required
@@ -767,13 +813,13 @@ function ClaimRegistrationPage() {
             <>
               <FormSection number={1} title="Statement of investment">
                 <FormField
-                  label="Fraudulent entity"
+                  label="Financial Establishment"
                   name="investmentFraudulentEntity"
-                  placeholder="Enter fraudulent entity name"
+                  placeholder="Enter financial establishment"
                   required
                 />
                 <FormField
-                  label="CAA / SAN / IA number"
+                  label="Def. C.A. CLNO"
                   name="authorityReferenceNumber"
                   placeholder="Enter reference number"
                 />
@@ -793,14 +839,14 @@ function ClaimRegistrationPage() {
                   />
                 </label>
                 <SelectField
-                  label="Particulars (Cash / NEFT / RTGS / IMPS / Cheque)"
+                  label="PARTICULARS (CASH / NEFT / RTGS / IMPS OR CHEQUE)"
                   name="paymentParticulars"
                   placeholder="Select payment mode"
                   options={["Cash", "NEFT", "RTGS", "IMPS", "Cheque"]}
                   required
                 />
                 <FormField
-                  label="Name of scheme"
+                  label="NAME OF THE SCHEME"
                   name="investmentSchemeName"
                   placeholder="Enter scheme name"
                   required
@@ -809,7 +855,7 @@ function ClaimRegistrationPage() {
 
               <FormSection number={2} title="Depositor bank details">
                 <FormField
-                  label="Bank account number"
+                  label="Bank Account No."
                   name="stepTwoDepositorAccount"
                   placeholder="Enter account number"
                   required
@@ -833,9 +879,9 @@ function ClaimRegistrationPage() {
                 <DepositTransactionTable prefix="depositorTransaction" />
               </FormSection>
 
-              <FormSection number={3} title="Fraudulent entity bank details">
+              <FormSection number={3} title="F.E. Bank Details">
                 <FormField
-                  label="Bank account number"
+                  label="Bank Account No."
                   name="entityBankAccount"
                   placeholder="Enter account number"
                 />
@@ -857,31 +903,29 @@ function ClaimRegistrationPage() {
                 <DepositTransactionTable prefix="entityTransaction" />
               </FormSection>
 
-              <section className="rounded-md border border-black/[0.05] bg-muted/20 p-4 dark:border-white/[0.08] dark:bg-white/[0.025]">
-                <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-end">
-                  <p className="border-l-2 border-primary pl-3 text-xs leading-relaxed text-muted-foreground">
-                    <span className="font-semibold text-foreground">Note:</span>{" "}
-                    Ensure that the bank account number, IFSC code, deposit
-                    amounts, and payment references are correct. The details
-                    will be cross-verified. Providing false information is
-                    punishable.
-                  </p>
-                  <label className="flex min-h-28 cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-border bg-background p-3 text-center transition-colors hover:bg-muted/30 dark:bg-input/20">
-                    <span className="text-xs font-medium text-foreground">
-                      Signature and name in capitals
-                    </span>
-                    <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                      <Upload className="size-3" />
-                      Upload signature with stamp
-                    </span>
-                    <input
-                      name="entitySignature"
-                      type="file"
-                      accept="image/*,.pdf"
-                      className="sr-only"
-                    />
-                  </label>
-                </div>
+              <section className="grid gap-4 rounded-md border border-black/[0.05] bg-muted/20 p-4 dark:border-white/[0.08] dark:bg-white/[0.025] sm:grid-cols-2">
+                <p className="border-l-2 border-primary pl-3 text-xs leading-relaxed text-muted-foreground sm:col-span-2">
+                  <span className="font-semibold text-foreground">Note:</span>{" "}
+                  For Financial Enterprise, please ensure the Account Number,
+                  IFSC Code, and amounts entered for Deposit and Receipt are
+                  correct, as they will be cross-verified. False information is
+                  punishable.
+                </p>
+                <FormField
+                  label="Place"
+                  name="investmentDeclarationPlace"
+                  placeholder="Enter place"
+                />
+                <FormField
+                  label="Date"
+                  name="investmentDeclarationDate"
+                  type="date"
+                />
+                <FileField
+                  label="Signature Upload"
+                  name="entitySignature"
+                  accept="image/*,.pdf"
+                />
               </section>
 
               <div className="flex items-center justify-between border-t border-border/60 pt-4">

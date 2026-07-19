@@ -1,5 +1,5 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -22,6 +22,17 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootLayout() {
   const [navOpen, setNavOpen] = useState(false)
   const { collapsed, onCollapsedChange } = useSidebarCollapsed()
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--app-sidebar-width',
+      collapsed ? '72px' : '240px',
+    )
+
+    return () => {
+      document.documentElement.style.removeProperty('--app-sidebar-width')
+    }
+  }, [collapsed])
 
   return (
     <ThemeProvider>

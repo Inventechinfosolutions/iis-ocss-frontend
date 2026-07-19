@@ -52,11 +52,12 @@ const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
 const navRoutes: Partial<
   Record<
     string,
-    "/" | "/claim-registration" | "/companies" | "/victims" | "/claims" | "/assets" | "/reports"
+    "/" | "/claim-registration" | "/assessment" | "/companies" | "/victims" | "/claims" | "/assets" | "/reports"
   >
 > = {
   overview: "/",
   "claim-registration": "/claim-registration",
+  assessment: "/assessment",
   entities: "/companies",
   depositors: "/victims",
   claims: "/claims",
