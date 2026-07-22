@@ -11,15 +11,20 @@ export function ClaimsFunnel({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="mb-1.5 min-w-0 sm:mb-2">
-        <h2
-          id="funnel-heading"
-          className="font-display text-xs font-semibold tracking-tight text-foreground sm:text-sm"
-        >
-          Claim processing workflow
-        </h2>
-        <p className="mt-0.5 hidden text-[10px] text-muted-foreground sm:block">
-          Where each claim stands today, from submission to closure
+      <div className="mb-1.5 flex items-start justify-between gap-2 sm:mb-2">
+        <div className="min-w-0">
+          <h2
+            id="funnel-heading"
+            className="font-display text-xs font-semibold tracking-tight text-foreground sm:text-sm"
+          >
+            Claim processing workflow
+          </h2>
+          <p className="mt-0.5 hidden text-[10px] text-muted-foreground sm:block">
+            Where each claim stands today, from submission to closure
+          </p>
+        </div>
+        <p className="shrink-0 text-[10px] font-medium text-muted-foreground sm:text-[11px]">
+          Number of applications
         </p>
       </div>
 

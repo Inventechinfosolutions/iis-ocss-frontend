@@ -6,6 +6,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   ClipboardCheck,
+  Clock3,
   Database,
   FilePlus2,
   FileText,
@@ -38,6 +39,7 @@ const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
   entities: Building2,
   depositors: Users,
   claims: FileText,
+  delayed: Clock3,
   verification: BadgeCheck,
   assessment: ClipboardCheck,
   settlement: Wallet,
@@ -52,11 +54,20 @@ const navIcons: Record<NavIcon, typeof LayoutDashboard> = {
 const navRoutes: Partial<
   Record<
     string,
-    "/" | "/claim-registration" | "/assessment" | "/companies" | "/victims" | "/claims" | "/assets" | "/reports"
+    | "/"
+    | "/claim-registration"
+    | "/delayed-claims"
+    | "/assessment"
+    | "/companies"
+    | "/victims"
+    | "/claims"
+    | "/assets"
+    | "/reports"
   >
 > = {
   overview: "/",
   "claim-registration": "/claim-registration",
+  "delayed-claims": "/delayed-claims",
   assessment: "/assessment",
   entities: "/companies",
   depositors: "/victims",

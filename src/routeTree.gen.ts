@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DelayedClaimsRouteImport } from './routes/delayed-claims'
 import { Route as ClaimRegistrationRouteImport } from './routes/claim-registration'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
@@ -32,6 +33,11 @@ import { Route as AlertsAlertIdRouteImport } from './routes/alerts/$alertId'
 import { Route as CompaniesCompanyIdIndexRouteImport } from './routes/companies/$companyId/index'
 import { Route as CompaniesCompanyIdSchemesSchemeIdRouteImport } from './routes/companies/$companyId/schemes/$schemeId'
 
+const DelayedClaimsRoute = DelayedClaimsRouteImport.update({
+  id: '/delayed-claims',
+  path: '/delayed-claims',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClaimRegistrationRoute = ClaimRegistrationRouteImport.update({
   id: '/claim-registration',
   path: '/claim-registration',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
+  '/delayed-claims': typeof DelayedClaimsRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
+  '/delayed-claims': typeof DelayedClaimsRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assessment': typeof AssessmentRoute
   '/claim-registration': typeof ClaimRegistrationRoute
+  '/delayed-claims': typeof DelayedClaimsRoute
   '/alerts/$alertId': typeof AlertsAlertIdRoute
   '/claim-windows/$windowId': typeof ClaimWindowsWindowIdRoute
   '/claims/$claimId': typeof ClaimsClaimIdRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assessment'
     | '/claim-registration'
+    | '/delayed-claims'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assessment'
     | '/claim-registration'
+    | '/delayed-claims'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assessment'
     | '/claim-registration'
+    | '/delayed-claims'
     | '/alerts/$alertId'
     | '/claim-windows/$windowId'
     | '/claims/$claimId'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssessmentRoute: typeof AssessmentRoute
   ClaimRegistrationRoute: typeof ClaimRegistrationRoute
+  DelayedClaimsRoute: typeof DelayedClaimsRoute
   AlertsAlertIdRoute: typeof AlertsAlertIdRoute
   ClaimWindowsWindowIdRoute: typeof ClaimWindowsWindowIdRoute
   ClaimsClaimIdRoute: typeof ClaimsClaimIdRoute
@@ -315,6 +328,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/delayed-claims': {
+      id: '/delayed-claims'
+      path: '/delayed-claims'
+      fullPath: '/delayed-claims'
+      preLoaderRoute: typeof DelayedClaimsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/claim-registration': {
       id: '/claim-registration'
       path: '/claim-registration'
@@ -490,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssessmentRoute: AssessmentRoute,
   ClaimRegistrationRoute: ClaimRegistrationRoute,
+  DelayedClaimsRoute: DelayedClaimsRoute,
   AlertsAlertIdRoute: AlertsAlertIdRoute,
   ClaimWindowsWindowIdRoute: ClaimWindowsWindowIdRoute,
   ClaimsClaimIdRoute: ClaimsClaimIdRoute,

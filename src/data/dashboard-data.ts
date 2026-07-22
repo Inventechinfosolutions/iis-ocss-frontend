@@ -488,6 +488,7 @@ export type NavIcon =
   | "entities"
   | "depositors"
   | "claims"
+  | "delayed"
   | "verification"
   | "assessment"
   | "settlement"
@@ -514,6 +515,7 @@ export const navGroups: NavGroup[] = [
     heading: "Claim settlement",
     items: [
       { id: "claim-registration", label: "Claim Registration", icon: "registration" },
+      { id: "delayed-claims", label: "Delayed Claims", icon: "delayed" },
       { id: "entities", label: "Fraudulent entities", icon: "entities", badge: String(feCompanies.length) },
       { id: "depositors", label: "Depositors", icon: "depositors" },
       { id: "claims", label: "Claims", icon: "claims" },
