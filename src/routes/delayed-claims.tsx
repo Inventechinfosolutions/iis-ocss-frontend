@@ -253,7 +253,7 @@ function ApplicantInstructions({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton
-        className="!fixed !top-1/2 !left-1/2 flex max-h-[90svh] !w-[calc(100vw-2rem)] !max-w-[960px] -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-2xl border border-border/70 bg-white p-0 shadow-2xl sm:!max-w-[960px] lg:!left-[calc((100vw+var(--app-sidebar-width))/2)] lg:!w-[calc(100vw-var(--app-sidebar-width)-2rem)]"
+        className="!fixed !top-1/2 !left-1/2 flex max-h-[90svh] !w-[calc(100vw-2rem)] !max-w-[960px] -translate-x-1/2 -translate-y-1/2 flex-col gap-0 overflow-hidden rounded-2xl border border-border/70 bg-background p-0 text-foreground shadow-2xl sm:!max-w-[960px] lg:!left-[calc((100vw+var(--app-sidebar-width))/2)] lg:!w-[calc(100vw-var(--app-sidebar-width)-2rem)]"
       >
         <DialogHeader className="shrink-0 border-b border-border/70 px-5 py-4 sm:px-7">
           <DialogTitle className="pr-8 text-base font-bold tracking-wide text-foreground uppercase sm:text-lg">
@@ -363,7 +363,7 @@ function ApplicantInstructions({
           </div>
         </div>
 
-        <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none border-t border-border/70 bg-white px-5 py-4 sm:justify-end sm:px-7">
+        <DialogFooter className="mx-0 mb-0 shrink-0 rounded-none border-t border-border/70 bg-background px-5 py-4 sm:justify-end sm:px-7">
           <DialogClose render={<Button className="min-w-28 shadow-sm" />}>
             Close
           </DialogClose>
