@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react"
+import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import {
   ArrowLeft,
@@ -6,6 +6,7 @@ import {
   Check,
   Clock3,
   FileText,
+  Loader2,
   Upload,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -24,6 +25,8 @@ import {
   PageShell,
   SectionCard,
 } from "@/components/drilldown/page-shell"
+import { createEmptyDelayedClaimValues } from "@/features/delayed-claims/extractFields"
+import { useDelayedClaimAutoFill } from "@/features/delayed-claims/useDelayedClaimAutoFill"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/delayed-claims")({
@@ -48,6 +51,8 @@ const financialEstablishments = [
 type FieldProps = {
   label: string
   name: string
+  value: string
+  onValueChange: (value: string) => void
   placeholder?: string
   type?: string
   required?: boolean
@@ -57,6 +62,8 @@ type FieldProps = {
 function FormField({
   label,
   name,
+  value,
+  onValueChange,
   placeholder,
   type = "text",
   required,
@@ -69,10 +76,13 @@ function FormField({
         {required ? <span className="ml-0.5 text-destructive">*</span> : null}
       </span>
       <Input
+        id={name}
         name={name}
         type={type}
         required={required}
         placeholder={placeholder}
+        value={value}
+        onChange={(event) => onValueChange(event.target.value)}
         className="h-9 rounded-md bg-background"
       />
     </label>
@@ -82,6 +92,8 @@ function FormField({
 function SelectField({
   label,
   name,
+  value,
+  onValueChange,
   placeholder,
   options,
   required,
@@ -89,6 +101,8 @@ function SelectField({
 }: {
   label: string
   name: string
+  value: string
+  onValueChange: (value: string) => void
   placeholder: string
   options: string[]
   required?: boolean
@@ -101,9 +115,11 @@ function SelectField({
         {required ? <span className="ml-0.5 text-destructive">*</span> : null}
       </span>
       <select
+        id={name}
         name={name}
         required={required}
-        defaultValue=""
+        value={value}
+        onChange={(event) => onValueChange(event.target.value)}
         className="h-9 w-full rounded-md border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/20 dark:bg-input/30"
       >
         <option value="" disabled>
@@ -166,7 +182,15 @@ function FormSection({
   )
 }
 
-function DepositTransactionTable({ prefix }: { prefix: string }) {
+function DepositTransactionTable({
+  prefix,
+  values,
+  setValue,
+}: {
+  prefix: string
+  values: Record<string, string>
+  setValue: (id: string, value: string) => void
+}) {
   return (
     <div className="sm:col-span-2">
       <div className="overflow-x-auto">
@@ -184,57 +208,89 @@ function DepositTransactionTable({ prefix }: { prefix: string }) {
             </tr>
           </thead>
           <tbody>
-            {Array.from({ length: 5 }, (_, index) => (
-              <tr key={index}>
-                <td className="px-1.5 text-center text-xs text-muted-foreground">
-                  {index + 1}
-                </td>
-                <td className="px-1">
-                  <Input
-                    name={`${prefix}Date${index + 1}`}
-                    type="date"
-                    aria-label={`Transaction ${index + 1} date`}
-                    className="h-8 rounded-md bg-background text-xs"
-                  />
-                </td>
-                <td className="px-1">
-                  <Input
-                    name={`${prefix}Deposit${index + 1}`}
-                    type="number"
-                    min="0"
-                    placeholder="Amount"
-                    aria-label={`Transaction ${index + 1} deposit`}
-                    className="h-8 rounded-md bg-background text-xs"
-                  />
-                </td>
-                <td className="px-1">
-                  <Input
-                    name={`${prefix}Reference${index + 1}`}
-                    placeholder="Reference / cheque no."
-                    aria-label={`Transaction ${index + 1} reference`}
-                    className="h-8 rounded-md bg-background text-xs"
-                  />
-                </td>
-                <td className="px-1">
-                  <Input
-                    name={`${prefix}Total${index + 1}`}
-                    type="number"
-                    min="0"
-                    placeholder="Total"
-                    aria-label={`Transaction ${index + 1} total`}
-                    className="h-8 rounded-md bg-background text-xs"
-                  />
-                </td>
-                <td className="px-1">
-                  <Input
-                    name={`${prefix}Remarks${index + 1}`}
-                    placeholder="Remarks"
-                    aria-label={`Transaction ${index + 1} remarks`}
-                    className="h-8 rounded-md bg-background text-xs"
-                  />
-                </td>
-              </tr>
-            ))}
+            {Array.from({ length: 5 }, (_, index) => {
+              const n = index + 1
+              const dateId = `${prefix}Date${n}`
+              const depositId = `${prefix}Deposit${n}`
+              const referenceId = `${prefix}Reference${n}`
+              const totalId = `${prefix}Total${n}`
+              const remarksId = `${prefix}Remarks${n}`
+
+              return (
+                <tr key={n}>
+                  <td className="px-1.5 text-center text-xs text-muted-foreground">
+                    {n}
+                  </td>
+                  <td className="px-1">
+                    <Input
+                      id={dateId}
+                      name={dateId}
+                      type="date"
+                      value={values[dateId] ?? ""}
+                      onChange={(event) => setValue(dateId, event.target.value)}
+                      aria-label={`Transaction ${n} date`}
+                      className="h-8 rounded-md bg-background text-xs"
+                    />
+                  </td>
+                  <td className="px-1">
+                    <Input
+                      id={depositId}
+                      name={depositId}
+                      type="number"
+                      min="0"
+                      placeholder="Amount"
+                      value={values[depositId] ?? ""}
+                      onChange={(event) =>
+                        setValue(depositId, event.target.value)
+                      }
+                      aria-label={`Transaction ${n} deposit`}
+                      className="h-8 rounded-md bg-background text-xs"
+                    />
+                  </td>
+                  <td className="px-1">
+                    <Input
+                      id={referenceId}
+                      name={referenceId}
+                      placeholder="Reference / cheque no."
+                      value={values[referenceId] ?? ""}
+                      onChange={(event) =>
+                        setValue(referenceId, event.target.value)
+                      }
+                      aria-label={`Transaction ${n} reference`}
+                      className="h-8 rounded-md bg-background text-xs"
+                    />
+                  </td>
+                  <td className="px-1">
+                    <Input
+                      id={totalId}
+                      name={totalId}
+                      type="number"
+                      min="0"
+                      placeholder="Total"
+                      value={values[totalId] ?? ""}
+                      onChange={(event) =>
+                        setValue(totalId, event.target.value)
+                      }
+                      aria-label={`Transaction ${n} total`}
+                      className="h-8 rounded-md bg-background text-xs"
+                    />
+                  </td>
+                  <td className="px-1">
+                    <Input
+                      id={remarksId}
+                      name={remarksId}
+                      placeholder="Remarks"
+                      value={values[remarksId] ?? ""}
+                      onChange={(event) =>
+                        setValue(remarksId, event.target.value)
+                      }
+                      aria-label={`Transaction ${n} remarks`}
+                      className="h-8 rounded-md bg-background text-xs"
+                    />
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
@@ -375,6 +431,26 @@ function ApplicantInstructions({
 
 function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
   const [step, setStep] = useState<1 | 2>(1)
+  const [values, setValues] = useState(createEmptyDelayedClaimValues)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function setValue(id: string, value: string) {
+    setValues((prev) => ({ ...prev, [id]: value }))
+  }
+
+  function applyPatch(patch: Record<string, string>) {
+    setValues((prev) => ({ ...prev, ...patch }))
+  }
+
+  const autoFill = useDelayedClaimAutoFill({ applyPatch })
+
+  function fieldProps(name: string) {
+    return {
+      name,
+      value: values[name] ?? "",
+      onValueChange: (value: string) => setValue(name, value),
+    }
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -382,8 +458,82 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  function handleAutoFillFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (file) void autoFill.run(file)
+  }
+
   return (
     <SectionCard className="stagger-in">
+      <div className="mb-5 flex flex-col gap-3 border-b border-border/60 pb-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground">
+            Upload &amp; Auto-Fill
+          </p>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Converts PDF to images in the browser, then extracts with Gemini
+            using field config (not DOM capture). Fills both steps — review
+            values after fill.
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf,application/pdf"
+            className="sr-only"
+            disabled={autoFill.isRunning}
+            onChange={handleAutoFillFile}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={autoFill.isRunning}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {autoFill.isRunning ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Upload className="size-4" />
+            )}
+            {autoFill.isRunning ? "Extracting…" : "Upload and Autofill"}
+          </Button>
+          {autoFill.isRunning ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={autoFill.cancel}
+            >
+              Cancel
+            </Button>
+          ) : null}
+        </div>
+      </div>
+
+      {autoFill.isRunning && autoFill.stage ? (
+        <p className="mb-4 text-xs text-muted-foreground" role="status">
+          {autoFill.stage}
+        </p>
+      ) : null}
+
+      {!autoFill.isRunning && autoFill.filledCount > 0 ? (
+        <p className="mb-4 text-xs text-success">
+          {autoFill.filledCount} field(s) filled
+          {autoFill.tokenUsage?.total_tokens != null
+            ? ` · ${autoFill.tokenUsage.total_tokens.toLocaleString()} tokens`
+            : ""}
+        </p>
+      ) : null}
+
+      {autoFill.error ? (
+        <p className="mb-4 text-xs text-destructive" role="alert">
+          {autoFill.error}
+        </p>
+      ) : null}
+
       <nav
         aria-label="Delayed claim steps"
         className="mb-5 grid gap-2 border-b border-border/60 pb-5 sm:grid-cols-2"
@@ -457,36 +607,36 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <section className="grid gap-4 rounded-md bg-muted/20 p-4 sm:grid-cols-2">
               <FormField
                 label="Serial Number"
-                name="serialNumber"
+                {...fieldProps("serialNumber")}
                 placeholder="Enter serial number"
               />
               <FormField
                 label="Def. C.A. CLNO"
-                name="defCaClno"
+                {...fieldProps("defCaClno")}
                 placeholder="Enter Def. C.A. CLNO"
               />
               <SelectField
                 label="Competent Authority"
-                name="competentAuthority"
+                {...fieldProps("competentAuthority")}
                 placeholder="Select Competent Authority"
                 options={competentAuthorities}
                 required
               />
               <SelectField
                 label="Financial Establishment"
-                name="financialEstablishment"
+                {...fieldProps("financialEstablishment")}
                 placeholder="Select Financial Establishment"
                 options={financialEstablishments}
                 required
               />
               <FormField
                 label="Claim Application Number"
-                name="claimApplicationNumber"
+                {...fieldProps("claimApplicationNumber")}
                 placeholder="Enter claim application number"
               />
               <FormField
                 label="Date of Claim"
-                name="dateOfClaim"
+                {...fieldProps("dateOfClaim")}
                 type="date"
                 required
               />
@@ -495,18 +645,18 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={1} title="Applicant details">
               <FormField
                 label="Name of the applicant"
-                name="applicantName"
+                {...fieldProps("applicantName")}
                 required
                 placeholder="Full name"
               />
               <FormField
                 label="Father / Husband name"
-                name="fatherOrHusbandName"
+                {...fieldProps("fatherOrHusbandName")}
                 placeholder="Enter name"
               />
               <FormField
                 label="Customer / Client ID"
-                name="customerId"
+                {...fieldProps("customerId")}
                 placeholder="Enter customer ID"
               />
               <label className="grid min-w-0 gap-1.5 sm:col-span-2">
@@ -515,52 +665,55 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
                   <span className="ml-0.5 text-destructive">*</span>
                 </span>
                 <Textarea
+                  id="address"
                   name="address"
                   required
                   placeholder="Enter full postal address with PIN code"
+                  value={values.address ?? ""}
+                  onChange={(event) => setValue("address", event.target.value)}
                   className="min-h-20 rounded-md bg-background"
                 />
               </label>
-              <FormField label="Date of birth" name="dob" type="date" />
+              <FormField label="Date of birth" {...fieldProps("dob")} type="date" />
               <FormField
                 label="Age"
-                name="age"
+                {...fieldProps("age")}
                 type="number"
                 placeholder="Age"
               />
               <FormField
                 label="Mobile number"
-                name="mobile"
+                {...fieldProps("mobile")}
                 required
                 placeholder="10-digit mobile"
               />
               <FormField
                 label="Alternate mobile"
-                name="altMobile"
+                {...fieldProps("altMobile")}
                 placeholder="Optional"
               />
               <FormField
                 label="Email"
-                name="email"
+                {...fieldProps("email")}
                 type="email"
                 placeholder="name@example.com"
                 className="sm:col-span-2"
               />
               <FormField
                 label="Aadhaar / Passport / DL No."
-                name="idNumber"
+                {...fieldProps("idNumber")}
                 placeholder="Enter ID number"
               />
               <FileField label="Upload ID proof" name="idProof" />
               <FormField
                 label="PAN number"
-                name="pan"
+                {...fieldProps("pan")}
                 placeholder="ABCDE1234F"
               />
               <FileField label="Upload PAN" name="panProof" />
               <FormField
                 label="Delay condonation order No. & date"
-                name="condonationOrder"
+                {...fieldProps("condonationOrder")}
                 placeholder="Order number and date"
                 className="sm:col-span-2"
               />
@@ -573,22 +726,22 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={2} title="Nominee details (if applicable)">
               <FormField
                 label="Nominee name"
-                name="nomineeName"
+                {...fieldProps("nomineeName")}
                 placeholder="Enter nominee name"
               />
               <FormField
                 label="Gender & age"
-                name="nomineeGenderAge"
+                {...fieldProps("nomineeGenderAge")}
                 placeholder="e.g. Female, 42"
               />
               <FormField
                 label="Relationship"
-                name="nomineeRelationship"
+                {...fieldProps("nomineeRelationship")}
                 placeholder="Relationship"
               />
               <FormField
                 label="Nominee ID proof No."
-                name="nomineeId"
+                {...fieldProps("nomineeId")}
                 placeholder="Enter ID number"
               />
               <FileField
@@ -600,13 +753,13 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={3} title="Statement of investment">
               <FormField
                 label="Type of the scheme"
-                name="schemeType"
+                {...fieldProps("schemeType")}
                 required
                 placeholder="Scheme type"
               />
               <FormField
                 label="Name of the scheme"
-                name="schemeName"
+                {...fieldProps("schemeName")}
                 required
                 placeholder="Scheme name"
               />
@@ -615,25 +768,25 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={4} title="Depositor bank details">
               <FormField
                 label="Bank account No."
-                name="depositorAccount"
+                {...fieldProps("depositorAccount")}
                 required
                 placeholder="Account number"
               />
               <FormField
                 label="IFSC code"
-                name="depositorIfsc"
+                {...fieldProps("depositorIfsc")}
                 required
                 placeholder="IFSC"
               />
               <FormField
                 label="Bank name"
-                name="depositorBank"
+                {...fieldProps("depositorBank")}
                 required
                 placeholder="Bank name"
               />
               <FormField
                 label="Branch name"
-                name="depositorBranch"
+                {...fieldProps("depositorBranch")}
                 placeholder="Branch name"
               />
             </FormSection>
@@ -641,25 +794,25 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={5} title="Bank details for refund">
               <FormField
                 label="Bank account No."
-                name="refundAccount"
+                {...fieldProps("refundAccount")}
                 required
                 placeholder="Account number"
               />
               <FormField
                 label="IFSC code"
-                name="refundIfsc"
+                {...fieldProps("refundIfsc")}
                 required
                 placeholder="IFSC"
               />
               <FormField
                 label="Bank name"
-                name="refundBank"
+                {...fieldProps("refundBank")}
                 required
                 placeholder="Bank name"
               />
               <FormField
                 label="Branch name"
-                name="refundBranch"
+                {...fieldProps("refundBranch")}
                 placeholder="Branch name"
               />
             </FormSection>
@@ -667,14 +820,14 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={6} title="Total amount due">
               <FormField
                 label="Amount (in figures)"
-                name="amountFigures"
+                {...fieldProps("amountFigures")}
                 type="number"
                 required
                 placeholder="0.00"
               />
               <FormField
                 label="Amount (in words)"
-                name="amountWords"
+                {...fieldProps("amountWords")}
                 required
                 placeholder="Amount in words"
               />
@@ -686,6 +839,10 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
                   type="checkbox"
                   name="declaration"
                   required
+                  checked={values.declaration === "true"}
+                  onChange={(event) =>
+                    setValue("declaration", event.target.checked ? "true" : "")
+                  }
                   className="mt-0.5 size-4.5 rounded border-input accent-primary"
                 />
                 <span className="text-xs leading-relaxed text-muted-foreground">
@@ -697,13 +854,13 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
               </label>
               <FormField
                 label="Place"
-                name="place"
+                {...fieldProps("place")}
                 required
                 placeholder="Place"
               />
               <FormField
                 label="Date"
-                name="declarationDate"
+                {...fieldProps("declarationDate")}
                 type="date"
                 required
               />
@@ -722,18 +879,18 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={1} title="Statement of investment">
               <FormField
                 label="Financial Establishment"
-                name="investmentFinancialEstablishment"
+                {...fieldProps("investmentFinancialEstablishment")}
                 required
                 placeholder="M/s. Lancer Finance Company"
               />
               <FormField
                 label="Del_CA_CLNO"
-                name="delCaClno"
+                {...fieldProps("delCaClno")}
                 placeholder="Enter Del_CA_CLNO"
               />
               <FormField
                 label="Customer / Client ID"
-                name="investmentCustomerId"
+                {...fieldProps("investmentCustomerId")}
                 placeholder="Enter customer or client ID"
               />
               <label className="grid min-w-0 gap-1.5">
@@ -741,21 +898,26 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
                   Remarks
                 </span>
                 <Textarea
+                  id="investmentRemarks"
                   name="investmentRemarks"
                   placeholder="Enter remarks"
+                  value={values.investmentRemarks ?? ""}
+                  onChange={(event) =>
+                    setValue("investmentRemarks", event.target.value)
+                  }
                   className="min-h-20 rounded-md bg-background"
                 />
               </label>
               <SelectField
                 label="PARTICULARS (CASH / NEFT / RTGS / IMPS OR CHEQUE)"
-                name="paymentParticulars"
+                {...fieldProps("paymentParticulars")}
                 placeholder="Select payment mode"
                 options={["Cash", "NEFT", "RTGS", "IMPS", "Cheque"]}
                 required
               />
               <FormField
                 label="NAME OF THE SCHEME"
-                name="investmentSchemeName"
+                {...fieldProps("investmentSchemeName")}
                 required
                 placeholder="Enter scheme name"
               />
@@ -764,51 +926,59 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             <FormSection number={2} title="Depositor bank details">
               <FormField
                 label="Bank Account No."
-                name="stepTwoDepositorAccount"
+                {...fieldProps("stepTwoDepositorAccount")}
                 required
                 placeholder="Enter account number"
               />
               <FormField
                 label="IFSC code"
-                name="stepTwoDepositorIfsc"
+                {...fieldProps("stepTwoDepositorIfsc")}
                 required
                 placeholder="Enter IFSC code"
               />
               <FormField
                 label="Bank name"
-                name="stepTwoDepositorBank"
+                {...fieldProps("stepTwoDepositorBank")}
                 placeholder="Enter bank name"
               />
               <FormField
                 label="Branch name"
-                name="stepTwoDepositorBranch"
+                {...fieldProps("stepTwoDepositorBranch")}
                 placeholder="Enter branch name"
               />
-              <DepositTransactionTable prefix="depositorTransaction" />
+              <DepositTransactionTable
+                prefix="depositorTransaction"
+                values={values}
+                setValue={setValue}
+              />
             </FormSection>
 
             <FormSection number={3} title="F.E. Bank Details">
               <FormField
                 label="Bank Account No."
-                name="entityBankAccount"
+                {...fieldProps("entityBankAccount")}
                 placeholder="Enter account number"
               />
               <FormField
                 label="IFSC code"
-                name="entityBankIfsc"
+                {...fieldProps("entityBankIfsc")}
                 placeholder="Enter IFSC code"
               />
               <FormField
                 label="Bank name"
-                name="entityBankName"
+                {...fieldProps("entityBankName")}
                 placeholder="Enter bank name"
               />
               <FormField
                 label="Branch name"
-                name="entityBankBranch"
+                {...fieldProps("entityBankBranch")}
                 placeholder="Enter branch name"
               />
-              <DepositTransactionTable prefix="entityTransaction" />
+              <DepositTransactionTable
+                prefix="entityTransaction"
+                values={values}
+                setValue={setValue}
+              />
             </FormSection>
 
             <section className="grid gap-4 rounded-md border border-black/[0.05] bg-muted/20 p-4 dark:border-white/[0.08] dark:bg-white/[0.025] sm:grid-cols-2">
@@ -820,12 +990,12 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
               </p>
               <FormField
                 label="Place"
-                name="investmentDeclarationPlace"
+                {...fieldProps("investmentDeclarationPlace")}
                 placeholder="Enter place"
               />
               <FormField
                 label="Date"
-                name="investmentDeclarationDate"
+                {...fieldProps("investmentDeclarationDate")}
                 type="date"
               />
               <FileField
