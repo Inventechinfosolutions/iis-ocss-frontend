@@ -472,9 +472,7 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
             Upload &amp; Auto-Fill
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Converts PDF to images in the browser, then extracts with Gemini
-            using field config (not DOM capture). Fills both steps — review
-            values after fill.
+          Please review the auto-filled information before proceeding.
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -522,9 +520,6 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
       {!autoFill.isRunning && autoFill.filledCount > 0 ? (
         <p className="mb-4 text-xs text-success">
           {autoFill.filledCount} field(s) filled
-          {autoFill.tokenUsage?.total_tokens != null
-            ? ` · ${autoFill.tokenUsage.total_tokens.toLocaleString()} tokens`
-            : ""}
         </p>
       ) : null}
 

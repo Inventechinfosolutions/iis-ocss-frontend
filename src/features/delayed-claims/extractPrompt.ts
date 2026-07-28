@@ -37,6 +37,9 @@ STRICT RULES:
   - Do not return negative amounts. If the value is zero, blank, unreadable, or not a positive number, set value to null.
 - ID / reference numbers (Claim Application Number, Customer / Client ID, Aadhaar / Passport / DL No., Nominee ID):
   - Return digits/letters only with NO spaces. Example: "1423 3454 6565" → "142334546565".
+- Delay Condonation Order No. & date:
+  - Return as "<OrderNo> <DD/MM/YYYY>" with exactly one space between order number and date.
+  - Strip spaces inside the order number. Example: "ORD 12 345 05/07/2026" → "ORD12345 05/07/2026".
 - For table rows (Deposit 1, Deposit 2, …), map row order top-to-bottom as written on the page.
 - For each field, set "id" to the EXACT id from the expected fields list.
 - For each field, set "label" to the label from the expected fields list.

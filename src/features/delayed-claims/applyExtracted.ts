@@ -53,6 +53,44 @@ export function stripAllSpaces(raw: string): string {
 }
 
 /**
+ * Format "order no & date" as: <orderNo> <DD/MM/YYYY>
+ * Compact spaces inside the order number; keep one space before the date.
+ */
+export function normalizeCondonationOrder(raw: string): string {
+  const trimmed = raw.trim()
+  if (!trimmed) return ""
+
+  // Date at end: 12/07/2026, 12-07-2026, 2026-07-12, or spaced digits
+  const dateMatch = trimmed.match(
+    /(?:^|[\s,;|])((?:\d{1,2}\s*[/-]\s*\d{1,2}\s*[/-]\s*\d{4})|(?:\d{4}\s*[/-]\s*\d{1,2}\s*[/-]\s*\d{1,2}))\s*$/u,
+  )
+
+  if (!dateMatch || dateMatch.index == null) {
+    return stripAllSpaces(trimmed)
+  }
+
+  const dateRaw = dateMatch[1]
+  const orderRaw = trimmed.slice(0, dateMatch.index).trim()
+  const orderNo = stripAllSpaces(orderRaw)
+  if (!orderNo) return stripAllSpaces(trimmed)
+
+  const compactDate = stripAllSpaces(dateRaw)
+  let displayDate = compactDate
+
+  const dmy = compactDate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/)
+  if (dmy) {
+    displayDate = `${dmy[1].padStart(2, "0")}/${dmy[2].padStart(2, "0")}/${dmy[3]}`
+  } else {
+    const ymd = compactDate.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/)
+    if (ymd) {
+      displayDate = `${ymd[3].padStart(2, "0")}/${ymd[2].padStart(2, "0")}/${ymd[1]}`
+    }
+  }
+
+  return `${orderNo} ${displayDate}`
+}
+
+/**
  * Normalize amount OCR values to a positive number string.
  * Ignores /, ,, - and common currency suffixes (e.g. 5,000/- → 5000).
  */
@@ -116,6 +154,7 @@ export function normalizeExtractedValue(id: string, raw: string): string {
   if (id in SELECT_OPTIONS) value = normalizeSelectValue(id, value)
   if (isAmountFieldId(id)) value = normalizeAmountValue(value)
   if (isCompactNoSpaceFieldId(id)) value = stripAllSpaces(value)
+  if (id === "condonationOrder") value = normalizeCondonationOrder(value)
 
   return value
 }
