@@ -28,10 +28,20 @@ const GEMINI_RESPONSE_SCHEMA = {
 } as const
 
 function getGeminiConfig(): { apiKey: string; model: string } {
-  return {
-    apiKey: "AQ.Ab8RN6KjDVIK7hl71XhGU7AacR6OPCpjfQuNPYr4aF_n2uIdbA",
-    model: "gemini-3.6-flash",
+  const apiKey = (
+    import.meta.env.VITE_GEMINI_API_KEY as string | undefined
+  )?.trim()
+  const model =
+    (import.meta.env.VITE_GEMINI_MODEL as string | undefined)?.trim() ||
+    "gemini-3.6-flash"
+
+  if (!apiKey) {
+    throw new Error(
+      "Missing VITE_GEMINI_API_KEY. Add it to .env and restart the dev server.",
+    )
   }
+
+  return { apiKey, model }
 }
 
 type GeminiInlinePart = {
@@ -149,11 +159,15 @@ export async function extractFieldsWithGemini(options: {
   )
   const textPart: GeminiTextPart = { text: prompt }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`
+  // Auth keys (AQ.*) must use x-goog-api-key — ?key= returns ACCESS_TOKEN_TYPE_UNSUPPORTED.
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`
 
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": apiKey,
+    },
     signal: options.signal,
     body: JSON.stringify({
       contents: [{ role: "user", parts: [...imageParts, textPart] }],
