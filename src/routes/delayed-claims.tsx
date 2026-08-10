@@ -1,4 +1,11 @@
-import { useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react"
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react"
 import { createFileRoute } from "@tanstack/react-router"
 import {
   ArrowLeft,
@@ -25,6 +32,14 @@ import {
   PageShell,
   SectionCard,
 } from "@/components/drilldown/page-shell"
+import {
+  buildScanPreviewPages,
+  revokeScanPreviewPages,
+} from "@/features/delayed-claims/buildScanPreview"
+import {
+  DocumentScanPreview,
+  type ScanPreviewPage,
+} from "@/features/delayed-claims/DocumentScanPreview"
 import { createEmptyDelayedClaimValues } from "@/features/delayed-claims/extractFields"
 import { isBilingualFieldId } from "@/features/delayed-claims/bilingualFields"
 import { useDelayedClaimAutoFill } from "@/features/delayed-claims/useDelayedClaimAutoFill"
@@ -437,7 +452,33 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
   const [valuesKn, setValuesKn] = useState(createEmptyDelayedClaimValues)
   const [language, setLanguage] = useState<FormLanguage>("en")
   const [hasKannada, setHasKannada] = useState(false)
+  const [previewPages, setPreviewPages] = useState<ScanPreviewPage[]>([])
+  const [previewFileName, setPreviewFileName] = useState<string | null>(null)
+  const [previewLoading, setPreviewLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const previewAbortRef = useRef<AbortController | null>(null)
+  const previewPagesRef = useRef<ScanPreviewPage[]>([])
+
+  useEffect(() => {
+    previewPagesRef.current = previewPages
+  }, [previewPages])
+
+  useEffect(() => {
+    return () => {
+      previewAbortRef.current?.abort()
+      revokeScanPreviewPages(previewPagesRef.current)
+    }
+  }, [])
+
+  function clearPreview() {
+    previewAbortRef.current?.abort()
+    previewAbortRef.current = null
+    revokeScanPreviewPages(previewPagesRef.current)
+    previewPagesRef.current = []
+    setPreviewPages([])
+    setPreviewFileName(null)
+    setPreviewLoading(false)
+  }
 
   function setValue(id: string, value: string) {
     if (isBilingualFieldId(id) && language === "kn") {
@@ -484,23 +525,76 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
+  async function loadPreview(file: File) {
+    previewAbortRef.current?.abort()
+    const controller = new AbortController()
+    previewAbortRef.current = controller
+
+    revokeScanPreviewPages(previewPagesRef.current)
+    previewPagesRef.current = []
+    setPreviewPages([])
+    setPreviewFileName(file.name)
+    setPreviewLoading(true)
+
+    try {
+      const pages = await buildScanPreviewPages(file, {
+        signal: controller.signal,
+      })
+      if (controller.signal.aborted) {
+        revokeScanPreviewPages(pages)
+        return
+      }
+      previewPagesRef.current = pages
+      setPreviewPages(pages)
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return
+      setPreviewPages([])
+      previewPagesRef.current = []
+    } finally {
+      if (!controller.signal.aborted) setPreviewLoading(false)
+    }
+  }
+
   function handleAutoFillFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     event.target.value = ""
-    if (file) void autoFill.run(file)
+    if (!file) return
+    void loadPreview(file)
+    void autoFill.run(file)
   }
 
   const showLanguageToggle = hasKannada || autoFill.hasKannada
+  const showPreview = previewLoading || previewPages.length > 0
 
   return (
     <SectionCard className="stagger-in">
+      <div
+        className={cn(
+          "gap-5",
+          showPreview
+            ? "grid lg:grid-cols-[minmax(280px,38%)_minmax(0,1fr)] lg:items-start"
+            : "block",
+        )}
+      >
+        {showPreview ? (
+          <DocumentScanPreview
+            pages={previewPages}
+            fileName={previewFileName}
+            loading={previewLoading}
+            onClear={clearPreview}
+            className="lg:sticky lg:top-4 lg:max-h-[calc(100vh-6rem)]"
+          />
+        ) : null}
+
+        <div className="min-w-0">
       <div className="mb-5 flex flex-col gap-3 border-b border-border/60 pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-foreground">
             Upload &amp; Auto-Fill
           </p>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Please review the auto-filled information before proceeding.
+            Please review the auto-filled information against the scanned
+            document before proceeding.
             {showLanguageToggle
               ? " Kannada values found — switch language to review."
               : ""}
@@ -582,7 +676,7 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
 
       {!autoFill.isRunning && autoFill.filledCount > 0 ? (
         <p className="mb-4 text-xs text-success">
-          {autoFill.filledCount} field(s) filled
+          {autoFill.filledCount} field(s) filled — verify against the scan
         </p>
       ) : null}
 
@@ -1077,6 +1171,8 @@ function DelayedClaimForm({ onSubmitted }: { onSubmitted: () => void }) {
           </>
         )}
       </form>
+        </div>
+      </div>
     </SectionCard>
   )
 }
