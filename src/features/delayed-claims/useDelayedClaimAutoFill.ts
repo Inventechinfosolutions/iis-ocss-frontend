@@ -70,7 +70,7 @@ export function useDelayedClaimAutoFill(options: {
       const message = err instanceof Error ? err.message : "Auto-fill failed"
       setError(
         message.includes("Failed to fetch")
-          ? "Cannot reach Gemini. Check network or VITE_GEMINI_API_KEY."
+          ? "Cannot reach Gemini. Check network connectivity."
           : message,
       )
     } finally {

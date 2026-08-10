@@ -28,20 +28,10 @@ const GEMINI_RESPONSE_SCHEMA = {
 } as const
 
 function getGeminiConfig(): { apiKey: string; model: string } {
-  const apiKey = (
-    import.meta.env.VITE_GEMINI_API_KEY as string | undefined
-  )?.trim()
-  const model =
-    (import.meta.env.VITE_GEMINI_MODEL as string | undefined)?.trim() ||
-    "gemini-3.6-flash"
-
-  if (!apiKey) {
-    throw new Error(
-      "Missing VITE_GEMINI_API_KEY. Add it to iis-ocss-frontend/.env and restart the dev server.",
-    )
+  return {
+    apiKey: "AQ.Ab8RN6KjDVIK7hl71XhGU7AacR6OPCpjfQuNPYr4aF_n2uIdbA",
+    model: "gemini-3.6-flash",
   }
-
-  return { apiKey, model }
 }
 
 type GeminiInlinePart = {
