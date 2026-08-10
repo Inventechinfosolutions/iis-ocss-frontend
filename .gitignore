@@ -12,9 +12,7 @@ dist
 dist-ssr
 *.local
 
-# Local env (Gemini API key, etc.)
-.env
-.env.*.local
+
 
 # Editor directories and files
 .vscode/*
